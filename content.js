@@ -213,6 +213,14 @@
       togglePanel();
     }
 
+    if (data.action === "THEME_CHANGED" && data.colors) {
+      const root = document.documentElement;
+      root.style.setProperty("--yrusika-bg-dark", data.colors.bgPrimary);
+      root.style.setProperty("--yrusika-accent", data.colors.primaryBrand);
+      root.style.setProperty("--yrusika-text", data.colors.textPrimary);
+      root.style.setProperty("--yrusika-border", data.colors.uiBorder);
+    }
+
     if (data.action === "TRIGGER_SNAPSHOT") {
       findVideo();
       if (videoElement && detector) {

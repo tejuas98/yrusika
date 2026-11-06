@@ -129,10 +129,28 @@
       </div>
     </div>
 
+    <!-- Theme Palette Section -->
+    <div class="form-group" style="margin-top: 20px; padding-top: 16px; border-top: 1px solid #e2e8f0;">
+      <label for="theme-palette">Default Color Palette</label>
+      <select id="theme-palette">
+        <!-- Injected via options.js from YRUSIKA_THEMES -->
+      </select>
+      <div class="hint">Choose your favorite portfolio palette for Yrusika's split-screen interface.</div>
+    </div>
+
+    <div class="form-group">
+      <label for="theme-mode">Appearance Mode</label>
+      <select id="theme-mode">
+        <option value="dark">Dark Mode (Default)</option>
+        <option value="light">Light Mode</option>
+      </select>
+    </div>
+
     <button class="btn-save" id="btn-save">Save Settings</button>
     <div class="status" id="status-msg">Settings saved successfully!</div>
   </div>
 
+  <script src="themes.js"></script>
   <script src="options.js"></script>
 </body>
 </html>

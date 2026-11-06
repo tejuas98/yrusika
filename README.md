@@ -18,6 +18,7 @@ An open-source, subscription-free alternative to proprietary video note-taking t
 * **Timestamp Badges & Jump Links:** Every note card includes a burned timestamp badge; clicking a card seeks the video player directly to that second.
 * **Obsidian & File System Integration:** Link directly to a local Obsidian vault directory or export notes to Markdown, PDF, Word, or plain text with one click.
 * **YouTube Ad Intelligence:** Automatically pauses note capture during mid-roll ads and resumes once the lecture content returns.
+* **20 Signature Color Palettes (Dark & Light Modes):** Seamless theme switcher featuring 20 curated color palettes (Corporate SaaS Blue, Emerald & Mint Forest, Sunset Violet & Peach, Ocean Breeze & Teal, Nordic Slate & Frost, Cyberpunk Neon, Retro Mustard & Espresso, Royal Rose Gold, and more) with custom CSS variables and one-click "Surprise Me" randomization.
 * **Video Playback Dock:** Overlay controls for 0.8x / 1.5x speed, 10s scrub, play/pause, volume toggle, and fullscreen focus mode.
 
 ---

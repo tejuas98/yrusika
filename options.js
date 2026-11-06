@@ -6,8 +6,21 @@ document.addEventListener("DOMContentLoaded", async () => {
   const geminiModelSelect = document.getElementById("gemini-model");
   const ollamaEndpointInput = document.getElementById("ollama-endpoint");
   const ollamaModelInput = document.getElementById("ollama-model");
+  const themePaletteSelect = document.getElementById("theme-palette");
+  const themeModeSelect = document.getElementById("theme-mode");
   const saveBtn = document.getElementById("btn-save");
   const statusMsg = document.getElementById("status-msg");
+
+  // Populate Palettes from themes.js
+  if (themePaletteSelect && window.YRUSIKA_THEMES) {
+    themePaletteSelect.innerHTML = "";
+    window.YRUSIKA_THEMES.forEach((t) => {
+      const opt = document.createElement("option");
+      opt.value = t.id;
+      opt.textContent = `${t.name} — ${t.vibe || ""}`;
+      themePaletteSelect.appendChild(opt);
+    });
+  }
 
   // Load existing settings
   if (chrome.storage && chrome.storage.local) {
@@ -16,7 +29,9 @@ document.addEventListener("DOMContentLoaded", async () => {
       "yrusika_gemini_key",
       "yrusika_gemini_model",
       "yrusika_ollama_endpoint",
-      "yrusika_ollama_model"
+      "yrusika_ollama_model",
+      "yrusika_theme_id",
+      "yrusika_theme_mode"
     ]);
 
     if (data.yrusika_provider) providerSelect.value = data.yrusika_provider;
@@ -24,6 +39,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (data.yrusika_gemini_model) geminiModelSelect.value = data.yrusika_gemini_model;
     if (data.yrusika_ollama_endpoint) ollamaEndpointInput.value = data.yrusika_ollama_endpoint;
     if (data.yrusika_ollama_model) ollamaModelInput.value = data.yrusika_ollama_model;
+    if (data.yrusika_theme_id && themePaletteSelect) themePaletteSelect.value = data.yrusika_theme_id;
+    if (data.yrusika_theme_mode && themeModeSelect) themeModeSelect.value = data.yrusika_theme_mode;
   }
 
   function updateProviderVisibility() {
@@ -46,7 +63,9 @@ document.addEventListener("DOMContentLoaded", async () => {
       yrusika_gemini_key: geminiKeyInput.value.trim(),
       yrusika_gemini_model: geminiModelSelect.value,
       yrusika_ollama_endpoint: ollamaEndpointInput.value.trim(),
-      yrusika_ollama_model: ollamaModelInput.value.trim()
+      yrusika_ollama_model: ollamaModelInput.value.trim(),
+      yrusika_theme_id: themePaletteSelect ? themePaletteSelect.value : "nordic-slate-frost",
+      yrusika_theme_mode: themeModeSelect ? themeModeSelect.value : "dark"
     };
 
     if (chrome.storage && chrome.storage.local) {
@@ -59,4 +78,3 @@ document.addEventListener("DOMContentLoaded", async () => {
     }, 3000);
   });
 });
-

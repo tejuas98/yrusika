@@ -56,6 +56,7 @@
         "panel.html",
         "panel.css",
         "panel.js",
+        "themes.js",
         "vision-detector.js",
         "ai-client.js",
         "assets/*"

@@ -293,6 +293,132 @@ document.addEventListener("DOMContentLoaded", () => {
     propsContent.classList.toggle("open");
   });
 
+  // =========================================================================
+  // Portfolio Theme & Color Palette Engine (20 Palettes + Dark/Light Mode)
+  // =========================================================================
+  let currentThemeId = "nordic-slate-frost";
+  let currentMode = "dark";
+
+  const paletteDrawer = document.getElementById("palette-drawer");
+  const paletteToggle = document.getElementById("palette-toggle");
+  const closePaletteDrawer = document.getElementById("close-palette-drawer");
+  const paletteModeToggle = document.getElementById("palette-mode-toggle");
+  const currentModeLabel = document.getElementById("current-mode-label");
+  const paletteRandomBtn = document.getElementById("palette-random-btn");
+  const paletteCardsList = document.getElementById("palette-cards-list");
+  const themeToggleBtn = document.getElementById("theme-toggle");
+
+  async function initThemeSystem() {
+    if (typeof chrome !== "undefined" && chrome.storage && chrome.storage.local) {
+      const stored = await chrome.storage.local.get(["yrusika_theme_id", "yrusika_theme_mode"]);
+      if (stored.yrusika_theme_id) currentThemeId = stored.yrusika_theme_id;
+      if (stored.yrusika_theme_mode) currentMode = stored.yrusika_theme_mode;
+    }
+
+    applyTheme(currentThemeId, currentMode);
+    renderPaletteCards();
+
+    if (paletteToggle) {
+      paletteToggle.addEventListener("click", () => {
+        paletteDrawer.classList.toggle("hidden");
+      });
+    }
+
+    if (closePaletteDrawer) {
+      closePaletteDrawer.addEventListener("click", () => {
+        paletteDrawer.classList.add("hidden");
+      });
+    }
+
+    if (themeToggleBtn) {
+      themeToggleBtn.addEventListener("click", () => {
+        toggleMode();
+      });
+    }
+
+    if (paletteModeToggle) {
+      paletteModeToggle.addEventListener("click", () => {
+        toggleMode();
+      });
+    }
+
+    if (paletteRandomBtn) {
+      paletteRandomBtn.addEventListener("click", () => {
+        if (!window.YRUSIKA_THEMES || !window.YRUSIKA_THEMES.length) return;
+        const randomIndex = Math.floor(Math.random() * window.YRUSIKA_THEMES.length);
+        const randomTheme = window.YRUSIKA_THEMES[randomIndex];
+        applyTheme(randomTheme.id, currentMode);
+      });
+    }
+  }
+
+  function toggleMode() {
+    currentMode = currentMode === "dark" ? "light" : "dark";
+    applyTheme(currentThemeId, currentMode);
+  }
+
+  function applyTheme(themeId, mode = currentMode) {
+    currentThemeId = themeId;
+    currentMode = mode;
+    const themes = window.YRUSIKA_THEMES || [];
+    const theme = themes.find((t) => t.id === themeId) || themes[0];
+    if (!theme) return;
+
+    const colors = theme[mode] || theme.dark;
+    const root = document.documentElement;
+
+    root.style.setProperty("--bg-primary", colors.bgPrimary);
+    root.style.setProperty("--surface-card", colors.surfaceCard);
+    root.style.setProperty("--primary-brand", colors.primaryBrand);
+    root.style.setProperty("--secondary-brand", colors.secondaryBrand);
+    root.style.setProperty("--accent-sparkle", colors.accentSparkle);
+    root.style.setProperty("--text-primary", colors.textPrimary);
+    root.style.setProperty("--text-secondary", colors.textSecondary);
+    root.style.setProperty("--ui-border", colors.uiBorder);
+
+    if (currentModeLabel) {
+      currentModeLabel.textContent = mode.charAt(0).toUpperCase() + mode.slice(1);
+    }
+
+    if (typeof chrome !== "undefined" && chrome.storage && chrome.storage.local) {
+      chrome.storage.local.set({
+        yrusika_theme_id: currentThemeId,
+        yrusika_theme_mode: currentMode
+      });
+    }
+
+    sendToParent("THEME_CHANGED", { themeId, mode, colors });
+    renderPaletteCards();
+  }
+
+  function renderPaletteCards() {
+    if (!paletteCardsList || !window.YRUSIKA_THEMES) return;
+    paletteCardsList.innerHTML = "";
+
+    window.YRUSIKA_THEMES.forEach((t) => {
+      const colors = t[currentMode] || t.dark;
+      const card = document.createElement("div");
+      card.className = `palette-card ${t.id === currentThemeId ? "active" : ""}`;
+      card.innerHTML = `
+        <div class="palette-card-name">${t.name}</div>
+        <div class="palette-card-vibe">${t.vibe || ""}</div>
+        <div class="palette-swatches">
+          <span class="palette-swatch-dot" style="background: ${colors.bgPrimary};" title="Background"></span>
+          <span class="palette-swatch-dot" style="background: ${colors.primaryBrand};" title="Primary Brand"></span>
+          <span class="palette-swatch-dot" style="background: ${colors.accentSparkle};" title="Accent Sparkle"></span>
+        </div>
+      `;
+
+      card.addEventListener("click", () => {
+        applyTheme(t.id, currentMode);
+      });
+
+      paletteCardsList.appendChild(card);
+    });
+  }
+
+  initThemeSystem();
+
   // Notify content.js that panel is ready
   sendToParent("PANEL_READY");
 });
