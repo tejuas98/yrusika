@@ -1,10 +1,10 @@
-# Yrusika — Open-Source AI Video Note Taker & Visual Transcriber
+# Yrusika — Open-Source AI Video Note Taker (Chrome Extension)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Open Source](https://img.shields.io/badge/Open%20Source-100%25-brightgreen.svg)](https://github.com/tejuas98/yrusika)
 [![Platform](https://img.shields.io/badge/Platform-Chrome%20%7C%20Edge%20%7C%20Brave%20%7C%20Arc-orange.svg)](https://github.com/tejuas98/yrusika)
 
-**Yrusika** is a 100% free, open-source AI video note-taking workstation and visual transcriber for Chrome and Chromium browsers. It docks directly alongside YouTube, Coursera, Udemy, and any HTML5 video player, runs real-time computer-vision scene detection, captures high-resolution lecture slides and code keyframes, and streams structured, timestamped Markdown directly into your local Obsidian vault or files.
+**Yrusika** is a 100% free, open-source AI video note-taking workstation and visual transcriber built specifically as a **Chromium extension** (Google Chrome, Brave, Arc, Microsoft Edge). It docks directly alongside YouTube, Coursera, Udemy, and any web video player, runs real-time computer-vision scene detection, captures high-resolution lecture slides and code keyframes, and streams structured, timestamped Markdown directly into your local Obsidian vault or files.
 
 Zero subscriptions, zero paywalls, zero vendor tracking. Bring your own free Google Gemini API key or run completely offline with local Ollama models.
 
@@ -172,7 +172,7 @@ The embedded note editor supports complete GitHub Flavored Markdown:
 ## Ecosystem & Architecture
 
 <p align="center">
-  <img src="assets/flowchart.png" alt="Yrusika Ecosystem Architecture" width="480" />
+  <img src="assets/flowchart.png" alt="Yrusika Ecosystem Architecture" width="100%" />
 </p>
 
 ### Pipeline Architecture

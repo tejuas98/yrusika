@@ -1,0 +1,22 @@
+{
+  "name": {
+    "message": "Obsidian AI 비디오 노트 & 스크린샷 (YouTube, Udemy, 네이버TV 등) - Yrusika",
+    "description": "Extension name displayed in the Chrome Web Store and browser"
+  },
+  "description": {
+    "message": "한 번 시청으로 평생 참조: AI로 비디오를 Obsidian 로컬 마크다운 노트&스크린샷으로 변환",
+    "description": "Extension description displayed in the Chrome Web Store"
+  },
+  "allowYouTubeAds": {
+    "message": "YouTube 광고 허용",
+    "description": "Toggle label to control whether YouTube ads should be allowed to play"
+  },
+  "joinOurDiscord": {
+    "message": "Discord에 참여하기",
+    "description": "Link text inviting users to join the Discord community server"
+  },
+  "feedback": {
+    "message": "피드백",
+    "description": "Button label for users to provide feedback about the extension"
+  }
+}

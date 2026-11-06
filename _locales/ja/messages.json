@@ -1,0 +1,22 @@
+{
+  "name": {
+    "message": "Obsidian AI動画ノート&スクリーンショット (YouTube, Udemy, ニコニコ等) - Yrusika",
+    "description": "Extension name displayed in the Chrome Web Store and browser"
+  },
+  "description": {
+    "message": "一度見て永久参照：AI支援で動画をObsidianローカルmarkdownノート&スクリーンショットに変換",
+    "description": "Extension description displayed in the Chrome Web Store"
+  },
+  "allowYouTubeAds": {
+    "message": "YouTube広告を許可",
+    "description": "Toggle label to control whether YouTube ads should be allowed to play"
+  },
+  "joinOurDiscord": {
+    "message": "Discordに参加する",
+    "description": "Link text inviting users to join the Discord community server"
+  },
+  "feedback": {
+    "message": "フィードバック",
+    "description": "Button label for users to provide feedback about the extension"
+  }
+}

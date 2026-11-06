@@ -1,27 +1,41 @@
 {
   "manifest_version": 3,
-  "name": "Yrusika — AI Video Note Taker & Visual Transcriber",
-  "version": "1.0.0",
-  "description": "Open-source AI video note taker. Real-time split screen, quadrant edge-diff scene detection, and live transcription using Gemini and Ollama.",
+  "name": "__MSG_name__",
+  "description": "__MSG_description__",
+  "version": "1.2.42",
+  "default_locale": "en",
+  "short_name": "Yrusika",
+  "homepage_url": "https://github.com/tejuas98/yrusika",
   "permissions": [
-    "storage",
     "activeTab",
-    "scripting"
+    "tabCapture",
+    "offscreen",
+    "cookies",
+    "storage",
+    "contextMenus",
+    "clipboardWrite",
+    "alarms",
+    "scripting",
+    "system.cpu",
+    "system.memory"
   ],
-  "host_permissions": [
-    "*://*.youtube.com/*",
-    "https://generativelanguage.googleapis.com/*",
-    "http://localhost:*/*",
-    "http://127.0.0.1:*/*"
-  ],
-  "icons": {
-    "16": "assets/icons/icon16.png",
-    "32": "assets/icons/icon32.png",
-    "48": "assets/icons/icon48.png",
-    "128": "assets/icons/icon128.png"
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
   },
+  "host_permissions": [
+    "*://*.hovernotes.io/*",
+    "*://www.hovernotes.io/*",
+    "http://localhost/*",
+    "https://www.hovernotes.io/",
+    "https://test.hovernotes.io/",
+    "https://alpha.hovernotes.io/",
+    "https://beta.hovernotes.io/",
+    "https://gamma.hovernotes.io/",
+    "<all_urls>",
+    "http://127.0.0.1/*"
+  ],
   "action": {
-    "default_title": "Yrusika — AI Video Note Taker",
     "default_popup": "popup.html",
     "default_icon": {
       "16": "assets/icons/icon16.png",
@@ -29,48 +43,62 @@
       "128": "assets/icons/icon128.png"
     }
   },
-  "options_ui": {
-    "page": "options.html",
-    "open_in_tab": true
+  "background": {
+    "service_worker": "background.js"
   },
   "content_scripts": [
     {
+      "all_frames": true,
       "matches": [
-        "*://*.youtube.com/*",
-        "https://*/*",
-        "http://*/*"
+        "<all_urls>"
       ],
-      "all_frames": false,
+      "match_about_blank": true,
       "js": [
-        "vision-detector.js",
-        "ai-client.js",
-        "content.js"
+        "hover-notes-utils.js",
+        "content-script.js",
+        "video-hover-button.js",
+        "string-utils.js",
+        "file-registry.js",
+        "local-file-system-v2.js",
+        "save-to-obsidian.js"
       ],
       "css": [
-        "hover.css"
+        "hn-inject.css"
+      ]
+    },
+    {
+      "all_frames": true,
+      "matches": [
+        "https://hovernotes.io/*",
+        "https://*.hovernotes.io/*"
+      ],
+      "run_at": "document_start",
+      "js": [
+        "unlock-pro.js"
       ]
     }
   ],
   "web_accessible_resources": [
     {
       "resources": [
-        "panel.html",
-        "panel.css",
-        "panel.js",
-        "dashboard.html",
-        "dashboard.css",
-        "dashboard.js",
-        "popup.html",
-        "popup.css",
-        "popup.js",
-        "themes.js",
-        "vision-detector.js",
-        "ai-client.js",
-        "assets/*"
+        "assets/icons/cursor-camera.png",
+        "assets/icons/hover-notes-icon-white.svg",
+        "unlock-pro.js",
+        "hn-inject.css",
+        "hn-shadow.css"
       ],
       "matches": [
         "<all_urls>"
       ]
     }
-  ]
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
+  },
+  "icons": {
+    "16": "assets/icons/icon16.png",
+    "32": "assets/icons/icon32.png",
+    "48": "assets/icons/icon48.png",
+    "128": "assets/icons/icon128.png"
+  }
 }

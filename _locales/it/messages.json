@@ -1,0 +1,22 @@
+{
+  "name": {
+    "message": "Note Video IA e Screenshot di Obsidian (YouTube, Udemy, etc) - Yrusika",
+    "description": "Extension name displayed in the Chrome Web Store and browser"
+  },
+  "description": {
+    "message": "Guarda una volta, riferisci per sempre: Trasforma qualsiasi video in note markdown locali con l'IA",
+    "description": "Extension description displayed in the Chrome Web Store"
+  },
+  "allowYouTubeAds": {
+    "message": "Consenti Annunci YouTube",
+    "description": "Toggle label to control whether YouTube ads should be allowed to play"
+  },
+  "joinOurDiscord": {
+    "message": "Unisciti al Nostro Discord",
+    "description": "Link text inviting users to join the Discord community server"
+  },
+  "feedback": {
+    "message": "Feedback",
+    "description": "Button label for users to provide feedback about the extension"
+  }
+}

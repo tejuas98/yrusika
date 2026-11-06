@@ -1,0 +1,22 @@
+{
+  "name": {
+    "message": "Obsidian KI-Video Notizen & Screenshots (YouTube, Udemy, etc) - Yrusika",
+    "description": "Extension name displayed in the Chrome Web Store and browser"
+  },
+  "description": {
+    "message": "Einmal ansehen, für immer referenzieren: Verwandeln Sie jedes Video in lokale Markdown-Notizen mit KI",
+    "description": "Extension description displayed in the Chrome Web Store"
+  },
+  "allowYouTubeAds": {
+    "message": "YouTube-Werbung Erlauben",
+    "description": "Toggle label to control whether YouTube ads should be allowed to play"
+  },
+  "joinOurDiscord": {
+    "message": "Tritt Unserem Discord Bei",
+    "description": "Link text inviting users to join the Discord community server"
+  },
+  "feedback": {
+    "message": "Feedback",
+    "description": "Button label for users to provide feedback about the extension"
+  }
+}

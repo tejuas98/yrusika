@@ -1,0 +1,22 @@
+{
+  "name": {
+    "message": "Obsidian AI 影片筆記與截圖 (YouTube, Udemy, 等) - Yrusika",
+    "description": "Extension name displayed in the Chrome Web Store and browser"
+  },
+  "description": {
+    "message": "看一次，永久參考：借助AI將任何影片轉換為Obsidian本地Markdown筆記與截圖",
+    "description": "Extension description displayed in the Chrome Web Store"
+  },
+  "allowYouTubeAds": {
+    "message": "允許YouTube廣告",
+    "description": "Toggle label to control whether YouTube ads should be allowed to play"
+  },
+  "joinOurDiscord": {
+    "message": "加入我們的Discord",
+    "description": "Link text inviting users to join the Discord community server"
+  },
+  "feedback": {
+    "message": "回饋",
+    "description": "Button label for users to provide feedback about the extension"
+  }
+}

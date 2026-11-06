@@ -1,481 +1,239 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Yrusika Settings</title>
-  <style>
-    :root {
-      --bg-primary: #0F172A;
-      --surface-card: #1E293B;
-      --primary-brand: #60A5FA;
-      --secondary-brand: #94A3B8;
-      --accent-sparkle: #38BDF8;
-      --text-primary: #F8FAFC;
-      --text-secondary: #94A3B8;
-      --ui-border: #334155;
-      --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      font-family: var(--font-family);
-      background: var(--bg-primary);
-      color: var(--text-primary);
-      min-height: 100vh;
-      padding: 40px 20px;
-      transition: background 0.25s ease, color 0.25s ease;
-    }
-
-    .settings-container {
-      max-width: 760px;
-      margin: 0 auto;
-    }
-
-    /* Top Header */
-    .settings-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 28px;
-      padding-bottom: 20px;
-      border-bottom: 1px solid var(--ui-border);
-    }
-
-    .brand-section {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-
-    .brand-logo-icon {
-      width: 40px;
-      height: 40px;
-      background: var(--primary-brand);
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #ffffff;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-    }
-
-    .brand-info h1 {
-      font-size: 20px;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-      color: var(--text-primary);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .open-source-tag {
-      font-size: 11px;
-      font-weight: 700;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid var(--ui-border);
-      color: var(--accent-sparkle);
-      padding: 2px 7px;
-      border-radius: 4px;
-      text-transform: uppercase;
-      letter-spacing: 0.03em;
-    }
-
-    .brand-info p {
-      font-size: 13px;
-      color: var(--text-secondary);
-      margin-top: 3px;
-    }
-
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .btn-save {
-      background: var(--primary-brand);
-      color: #ffffff;
-      font-weight: 600;
-      font-size: 13px;
-      border: none;
-      padding: 9px 20px;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: opacity 0.15s ease, transform 0.1s ease;
-    }
-
-    .btn-save:hover {
-      opacity: 0.9;
-      transform: translateY(-1px);
-    }
-
-    .btn-reset {
-      background: var(--surface-card);
-      border: 1px solid var(--ui-border);
-      color: var(--text-primary);
-      font-weight: 600;
-      font-size: 13px;
-      padding: 8px 16px;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: all 0.15s ease;
-    }
-
-    .btn-reset:hover {
-      border-color: var(--primary-brand);
-      color: var(--primary-brand);
-    }
-
-    /* Cards */
-    .card {
-      background: var(--surface-card);
-      border: 1px solid var(--ui-border);
-      border-radius: 12px;
-      padding: 24px;
-      margin-bottom: 22px;
-      transition: background 0.25s ease, border-color 0.25s ease;
-    }
-
-    .card-title {
-      font-size: 16px;
-      font-weight: 700;
-      color: var(--text-primary);
-      margin-bottom: 4px;
-    }
-
-    .card-subtitle {
-      font-size: 12px;
-      color: var(--text-secondary);
-      margin-bottom: 18px;
-    }
-
-    /* Setting Rows */
-    .setting-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 14px 0;
-      border-bottom: 1px solid var(--ui-border);
-    }
-
-    .setting-row:last-child {
-      border-bottom: none;
-      padding-bottom: 0;
-    }
-
-    .setting-info {
-      flex: 1;
-      padding-right: 20px;
-    }
-
-    .setting-label {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text-primary);
-      margin-bottom: 3px;
-    }
-
-    .setting-desc {
-      font-size: 11px;
-      color: var(--text-secondary);
-      line-height: 1.4;
-    }
-
-    /* Toggle Switch */
-    .switch {
-      position: relative;
-      display: inline-block;
-      width: 44px;
-      height: 24px;
-      flex-shrink: 0;
-    }
-
-    .switch input {
-      opacity: 0;
-      width: 0;
-      height: 0;
-    }
-
-    .slider {
-      position: absolute;
-      cursor: pointer;
-      inset: 0;
-      background-color: rgba(255, 255, 255, 0.15);
-      border: 1px solid var(--ui-border);
-      transition: 0.2s ease;
-      border-radius: 24px;
-    }
-
-    .slider:before {
-      position: absolute;
-      content: "";
-      height: 18px;
-      width: 18px;
-      left: 2px;
-      bottom: 2px;
-      background-color: #ffffff;
-      transition: 0.2s ease;
-      border-radius: 50%;
-    }
-
-    input:checked + .slider {
-      background-color: var(--primary-brand);
-      border-color: var(--primary-brand);
-    }
-
-    input:checked + .slider:before {
-      transform: translateX(20px);
-    }
-
-    /* Inputs & Selects */
-    .form-group {
-      margin-bottom: 16px;
-    }
-
-    .form-group:last-child {
-      margin-bottom: 0;
-    }
-
-    label {
-      display: block;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text-primary);
-      margin-bottom: 6px;
-    }
-
-    input[type="text"], input[type="password"], select {
-      width: 100%;
-      padding: 10px 14px;
-      background: var(--bg-primary);
-      border: 1px solid var(--ui-border);
-      border-radius: 6px;
-      color: var(--text-primary);
-      font-size: 13px;
-      outline: none;
-      transition: border-color 0.2s ease;
-    }
-
-    input:focus, select:focus {
-      border-color: var(--primary-brand);
-    }
-
-    .slider-range {
-      width: 100%;
-      height: 6px;
-      background: var(--bg-primary);
-      border-radius: 3px;
-      outline: none;
-      accent-color: var(--primary-brand);
-      cursor: pointer;
-    }
-
-    .hint {
-      font-size: 11px;
-      color: var(--text-secondary);
-      margin-top: 4px;
-    }
-
-    .hint a {
-      color: var(--primary-brand);
-      text-decoration: none;
-    }
-
-    /* Toast Status */
-    .toast-status {
-      position: fixed;
-      bottom: 24px;
-      right: 24px;
-      background: #10b981;
-      color: #ffffff;
-      padding: 10px 18px;
-      border-radius: 8px;
-      font-size: 13px;
-      font-weight: 600;
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-      display: none;
-      animation: fadeInToast 0.2s ease;
-      z-index: 1000;
-    }
-
-    @keyframes fadeInToast {
-      from { opacity: 0; transform: translateY(8px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* Footer Note */
-    .settings-footer {
-      text-align: center;
-      padding-top: 20px;
-      color: var(--text-secondary);
-      font-size: 12px;
-      line-height: 1.6;
-    }
-
-    .settings-footer a {
-      color: var(--primary-brand);
-      text-decoration: none;
-    }
-  </style>
-</head>
-<body>
-
-  <div class="settings-container">
-
-    <!-- Top Header -->
-    <header class="settings-header">
-      <div class="brand-section">
-        <div class="brand-logo-icon">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polygon points="5 3 19 12 5 21 5 3"/>
-          </svg>
-        </div>
-        <div class="brand-info">
-          <h1>Yrusika <span class="open-source-tag">Open Source</span></h1>
-          <p>Video note-taking for YouTube, Coursera, and local lectures.</p>
-        </div>
+<html>
+  <head>
+    <title>Yrusika Settings</title>
+    <link rel="stylesheet" href="options.css" />
+    <script src="options.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <div class="floating-actions">
+        <button id="save" class="btn-primary">Save</button>
+        <button id="restore" class="btn-secondary">Reset</button>
+        <span id="status"></span>
       </div>
 
-      <div class="header-actions">
-        <button id="btn-reset" class="btn-reset">Reset</button>
-        <button id="btn-save" class="btn-save">Save Settings</button>
-      </div>
-    </header>
-
-    <!-- CARD 1: General Extension Settings -->
-    <div class="card">
-      <h2 class="card-title">General Settings</h2>
-      <p class="card-subtitle">Configure extension behavior and video player controls.</p>
-
-      <div class="setting-row">
-        <div class="setting-info">
-          <div class="setting-label">Enable Extension</div>
-          <div class="setting-desc">Turn Yrusika visual scene detection and note taking on or off.</div>
+      <header>
+        <div class="logo-section">
+          <img src="assets/icons/hover-notes-icon-white.svg" alt="Yrusika" class="logo" />
+          <h1>Yrusika</h1>
         </div>
-        <label class="switch">
-          <input type="checkbox" id="cfg-enabled" checked>
-          <span class="slider"></span>
-        </label>
-      </div>
+        <p class="tagline">Video note-taking for Youtube, Udemy, Coursera and more.</p>
+      </header>
 
-      <div class="setting-row">
-        <div class="setting-info">
-          <div class="setting-label">Start with button hidden</div>
-          <div class="setting-desc">The floating button is invisible until you press V to show it.</div>
-        </div>
-        <label class="switch">
-          <input type="checkbox" id="cfg-start-hidden">
-          <span class="slider"></span>
-        </label>
-      </div>
+      <main>
+        <section class="card">
+          <h2>General Settings</h2>
+          <p class="section-desc">Configure extension behavior</p>
 
-      <div class="setting-row">
-        <div class="setting-info">
-          <div class="setting-label">Enable Yrusika for audio</div>
-          <div class="setting-desc">Show note taking button on audio podcast players too.</div>
-        </div>
-        <label class="switch">
-          <input type="checkbox" id="cfg-audio-enabled">
-          <span class="slider"></span>
-        </label>
-      </div>
+          <div class="settings-grid">
+            <div class="setting-row">
+              <div class="setting-info">
+                <label for="enabled">Enable Extension</label>
+                <span class="setting-desc">Turn Yrusika on or off</span>
+              </div>
+              <input id="enabled" type="checkbox" class="toggle" />
+            </div>
 
-      <div class="setting-row">
-        <div class="setting-info">
-          <div class="setting-label">Top Controller Opacity (<span id="opacity-val">0.9</span>)</div>
-          <div class="setting-desc">Transparency of the floating video controller bar on YouTube.</div>
-        </div>
-        <div style="width: 140px;">
-          <input type="range" id="cfg-opacity" class="slider-range" min="0.2" max="1.0" step="0.05" value="0.9">
-        </div>
-      </div>
+            <div class="setting-row">
+              <div class="setting-info">
+                <label for="startHidden">Start with button hidden</label>
+                <span class="setting-desc">Button is invisible until you press V to show it</span>
+              </div>
+              <input id="startHidden" type="checkbox" class="toggle" />
+            </div>
+
+            <!-- TODO: Implement these features
+            <div class="setting-row">
+              <div class="setting-info">
+                <label for="rememberSpeed">Remember playback speed</label>
+                <span class="setting-desc">Restore last used speed for each video</span>
+              </div>
+              <input id="rememberSpeed" type="checkbox" class="toggle" />
+            </div>
+
+            <div class="setting-row">
+              <div class="setting-info">
+                <label for="forceLastSavedSpeed">Force last saved speed</label>
+                <span class="setting-desc">Override video player speed settings</span>
+              </div>
+              <input id="forceLastSavedSpeed" type="checkbox" class="toggle" />
+            </div>
+            -->
+
+            <!-- audioBoolean: partial support only; hidden until audio observers are restored -->
+            <div class="setting-row" hidden>
+              <div class="setting-info">
+                <label for="audioBoolean">Enable Yrusika for audio</label>
+                <span class="setting-desc">Show button on audio players too</span>
+              </div>
+              <input id="audioBoolean" type="checkbox" class="toggle" />
+            </div>
+
+            <div class="setting-row">
+              <div class="setting-info">
+                <label for="controllerOpacity">Button opacity</label>
+                <span class="setting-desc">Transparency of the floating button (0-1)</span>
+              </div>
+              <input id="controllerOpacity" type="text" value="" class="input-small" placeholder="0.5" />
+            </div>
+          </div>
+        </section>
+
+        <!-- Revealed by options-bridge.js only when OBSIDIAN_BRIDGE_UI_ENABLED is set. -->
+        <section class="card" id="obsidian-bridge" hidden>
+          <h2>Obsidian Connection</h2>
+          <p class="section-desc">
+            Connect Yrusika to Obsidian with the
+            <strong>Yrusika Video Notes</strong> plugin. Notes and screenshots are
+            written straight into your vault — no folder picker, and it works in
+            browsers where direct file access isn't available (like Brave).
+          </p>
+
+          <div class="settings-grid">
+            <div class="setting-row">
+              <div class="setting-info">
+                <label>Status</label>
+                <span class="setting-desc" id="bridge-status">Checking…</span>
+              </div>
+              <button id="bridge-connect" class="btn-secondary" type="button">Connect</button>
+            </div>
+
+            <div class="setting-row">
+              <div class="setting-info">
+                <label for="bridge-mode">Save notes through Obsidian</label>
+                <span class="setting-desc">
+                  Off uses direct file access instead. Requires a connected vault.
+                </span>
+              </div>
+              <input id="bridge-mode" type="checkbox" class="toggle" />
+            </div>
+
+            <div class="setting-row">
+              <div class="setting-info">
+                <label for="bridge-port">Port</label>
+                <span class="setting-desc">Must match the plugin's port setting (default 27130)</span>
+              </div>
+              <input id="bridge-port" type="text" inputmode="numeric" placeholder="27130" />
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2>Blocked Sites</h2>
+          <p class="section-desc">Sites where Yrusika is disabled (one per line, regex supported)</p>
+
+          <textarea id="blacklist" rows="8" placeholder="example.com&#10;/(.+)youtube\.com(\/*)$/gi"></textarea>
+        </section>
+
+        <section class="card" id="customs">
+          <h2>Keyboard Shortcuts</h2>
+          <p class="section-desc">Customize keyboard shortcuts for video control</p>
+          <div class="scope-note" role="note">
+            <p class="scope-note-title">Outside Focus Mode</p>
+            <p class="scope-note-body">
+              These shortcuts control videos on regular webpages. In Yrusika Focus Mode, use the player controls in the editor instead.
+            </p>
+          </div>
+
+          <div class="shortcut-grid">
+            <div class="row customs" id="display">
+              <span class="action-label">Show/hide Yrusika button</span>
+              <input type="hidden" class="customDo" value="display" />
+              <input class="customKey" type="text" value="" placeholder="press a key" />
+              <input class="customValue" type="text" placeholder="value" disabled />
+              <select class="customForce" hidden>
+                <option value="false">Do not disable website key bindings</option>
+                <option value="true">Disable website key bindings</option>
+              </select>
+            </div>
+
+            <div class="row customs" id="slower">
+              <span class="action-label">Decrease speed</span>
+              <input type="hidden" class="customDo" value="slower" />
+              <input class="customKey" type="text" value="" placeholder="press a key" />
+              <input class="customValue" type="text" placeholder="0.10" />
+              <select class="customForce" hidden>
+                <option value="false">Do not disable website key bindings</option>
+                <option value="true">Disable website key bindings</option>
+              </select>
+            </div>
+
+            <div class="row customs" id="faster">
+              <span class="action-label">Increase speed</span>
+              <input type="hidden" class="customDo" value="faster" />
+              <input class="customKey" type="text" value="" placeholder="press a key" />
+              <input class="customValue" type="text" placeholder="0.10" />
+              <select class="customForce" hidden>
+                <option value="false">Do not disable website key bindings</option>
+                <option value="true">Disable website key bindings</option>
+              </select>
+            </div>
+
+            <div class="row customs" id="rewind">
+              <span class="action-label">Rewind</span>
+              <input type="hidden" class="customDo" value="rewind" />
+              <input class="customKey" type="text" value="" placeholder="press a key" />
+              <input class="customValue" type="text" placeholder="10" />
+              <select class="customForce" hidden>
+                <option value="false">Do not disable website key bindings</option>
+                <option value="true">Disable website key bindings</option>
+              </select>
+            </div>
+
+            <div class="row customs" id="advance">
+              <span class="action-label">Advance</span>
+              <input type="hidden" class="customDo" value="advance" />
+              <input class="customKey" type="text" value="" placeholder="press a key" />
+              <input class="customValue" type="text" placeholder="10" />
+              <select class="customForce" hidden>
+                <option value="false">Do not disable website key bindings</option>
+                <option value="true">Disable website key bindings</option>
+              </select>
+            </div>
+
+            <div class="row customs" id="reset">
+              <span class="action-label">Reset speed</span>
+              <input type="hidden" class="customDo" value="reset" />
+              <input class="customKey" type="text" value="" placeholder="press a key" />
+              <input class="customValue" type="text" placeholder="1.00" disabled />
+              <select class="customForce" hidden>
+                <option value="false">Do not disable website key bindings</option>
+                <option value="true">Disable website key bindings</option>
+              </select>
+            </div>
+
+            <div class="row customs" id="fast">
+              <span class="action-label">Preferred speed</span>
+              <input type="hidden" class="customDo" value="fast" />
+              <input class="customKey" type="text" value="" placeholder="press a key" />
+              <input class="customValue" type="text" placeholder="1.80" />
+              <select class="customForce" hidden>
+                <option value="false">Do not disable website key bindings</option>
+                <option value="true">Disable website key bindings</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- <button id="add" class="btn-secondary">+ Add New Shortcut</button> -->
+        </section>
+
+        <details class="faq-section">
+          <summary>Troubleshooting & FAQ</summary>
+          <div class="faq-content">
+            <h4>Controls not showing for local videos?</h4>
+            <p>You need to grant additional permissions:</p>
+            <ul>
+              <li>Navigate to <code>chrome://extensions</code></li>
+              <li>Find Yrusika and enable "Allow access to file URLs"</li>
+            </ul>
+          </div>
+        </details>
+      </main>
+
+      <footer>
+        <p>Yrusika v<span id="extension-version"></span> &middot; <a href="https://github.com/tejuas98/yrusika" target="_blank">GitHub</a></p>
+      </footer>
     </div>
-
-    <!-- CARD 2: AI Vision Provider -->
-    <div class="card">
-      <h2 class="card-title">AI Vision Provider</h2>
-      <p class="card-subtitle">Bring your own free Gemini key or run 100% offline with Ollama. Zero subscriptions or paywalls.</p>
-
-      <div class="form-group">
-        <label for="cfg-provider">AI Provider</label>
-        <select id="cfg-provider">
-          <option value="gemini">Google Gemini Flash (Recommended — 1,500 requests/day Free Tier)</option>
-          <option value="ollama">Local Ollama (100% Offline &amp; Free)</option>
-        </select>
-      </div>
-
-      <!-- Gemini Sub-Section -->
-      <div id="section-gemini">
-        <div class="form-group">
-          <label for="cfg-gemini-key">Gemini API Key</label>
-          <input type="password" id="cfg-gemini-key" placeholder="AIzaSy...">
-          <div class="hint">Get your free forever API key from <a href="https://aistudio.google.com/" target="_blank">Google AI Studio</a>.</div>
-        </div>
-
-        <div class="form-group">
-          <label for="cfg-gemini-model">Gemini Model</label>
-          <select id="cfg-gemini-model">
-            <option value="gemini-2.5-flash">Gemini 2.5 Flash (Fastest Vision &amp; Reasoning)</option>
-            <option value="gemini-flash-latest">Gemini Flash Latest</option>
-            <option value="gemini-2.5-pro">Gemini 2.5 Pro (Deep Architectural Diagrams)</option>
-          </select>
-        </div>
-      </div>
-
-      <!-- Ollama Sub-Section -->
-      <div id="section-ollama" style="display: none;">
-        <div class="form-group">
-          <label for="cfg-ollama-endpoint">Ollama Endpoint</label>
-          <input type="text" id="cfg-ollama-endpoint" value="http://localhost:11434">
-        </div>
-
-        <div class="form-group">
-          <label for="cfg-ollama-model">Vision Model</label>
-          <input type="text" id="cfg-ollama-model" value="llama3.2-vision">
-          <div class="hint">Ensure you have pulled the model locally: <code>ollama run llama3.2-vision</code></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- CARD 3: Portfolio Theme Customization -->
-    <div class="card">
-      <h2 class="card-title">Portfolio Color Themes</h2>
-      <p class="card-subtitle">Select your favorite portfolio color palette. Changes apply immediately to the side panel, dashboard, and settings.</p>
-
-      <div class="form-group">
-        <label for="cfg-palette">Active Color Palette (20 Themes)</label>
-        <select id="cfg-palette">
-          <!-- Injected dynamically from YRUSIKA_THEMES in themes.js -->
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label for="cfg-mode">Appearance Mode</label>
-        <select id="cfg-mode">
-          <option value="dark">Dark Mode (Default)</option>
-          <option value="light">Light Mode</option>
-        </select>
-      </div>
-    </div>
-
-    <!-- Footer -->
-    <div class="settings-footer">
-      <div>Yrusika &bull; 100% Free &amp; Open Source by Tejas (<a href="https://github.com/tejuas98/yrusika" target="_blank">tejuas98</a>)</div>
-      <div style="font-size: 11px; margin-top: 4px; opacity: 0.8;">MIT Licensed &bull; Safe YouTube isolation &bull; Zero vendor lock-in</div>
-    </div>
-
-  </div>
-
-  <div id="toast-status" class="toast-status">Settings saved successfully!</div>
-
-  <script src="themes.js"></script>
-  <script src="options.js"></script>
-</body>
+  </body>
 </html>

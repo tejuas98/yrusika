@@ -1,0 +1,22 @@
+{
+  "name": {
+    "message": "Obsidian AI 视频笔记与截图 (B站, 腾讯课堂, YouTube 等) - Yrusika",
+    "description": "Extension name displayed in the Chrome Web Store and browser"
+  },
+  "description": {
+    "message": "看一次，永久参考：借助AI将任何视频转换为Obsidian本地Markdown笔记与截图",
+    "description": "Extension description displayed in the Chrome Web Store"
+  },
+  "allowYouTubeAds": {
+    "message": "允许YouTube广告",
+    "description": "Toggle label to control whether YouTube ads should be allowed to play"
+  },
+  "joinOurDiscord": {
+    "message": "加入社区",
+    "description": "Link text inviting users to join the community"
+  },
+  "feedback": {
+    "message": "反馈",
+    "description": "Button label for users to provide feedback about the extension"
+  }
+}

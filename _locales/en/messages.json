@@ -1,0 +1,26 @@
+{
+  "name": {
+    "message": "Obsidian AI Video Notes & Screenshots (YouTube, Udemy, etc) - Yrusika",
+    "description": "Extension name displayed in the Chrome Web Store and browser"
+  },
+  "description": {
+    "message": "Video Note-taking for YouTube, Udemy, Coursera & more to Obsidian: AI-powered markdown notes with screenshots",
+    "description": "Extension description displayed in the Chrome Web Store"
+  },
+  "allowYouTubeAds": {
+    "message": "Allow YouTube Ads",
+    "description": "Toggle label to control whether YouTube ads should be allowed to play"
+  },
+  "joinOurDiscord": {
+    "message": "Join Our Discord",
+    "description": "Link text inviting users to join the Discord community server"
+  },
+  "worksInBrave": {
+    "message": "Yrusika now works in Brave",
+    "description": "Focus-mode banner ad announcing Brave browser support, links to the marketing page"
+  },
+  "feedback": {
+    "message": "Feedback",
+    "description": "Button label for users to provide feedback about the extension"
+  }
+}

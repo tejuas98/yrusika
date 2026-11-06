@@ -1,0 +1,22 @@
+{
+  "name": {
+    "message": "Obsidian ИИ Видео-заметки и Скриншоты (YouTube, Udemy, и др.) - Yrusika",
+    "description": "Extension name displayed in the Chrome Web Store and browser"
+  },
+  "description": {
+    "message": "Посмотрите однажды, ссылайтесь всегда: Превращайте видео в местные заметки markdown с ИИ",
+    "description": "Extension description displayed in the Chrome Web Store"
+  },
+  "allowYouTubeAds": {
+    "message": "Разрешить Рекламу YouTube",
+    "description": "Toggle label to control whether YouTube ads should be allowed to play"
+  },
+  "joinOurDiscord": {
+    "message": "Присоединяйтесь к Нашему Discord",
+    "description": "Link text inviting users to join the Discord community server"
+  },
+  "feedback": {
+    "message": "Обратная связь",
+    "description": "Button label for users to provide feedback about the extension"
+  }
+}
