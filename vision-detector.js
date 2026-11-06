@@ -1,6 +1,6 @@
 /**
  * VisionDetector: Client-side video frame sampling & scene-change detector
- * Implements the exact HoverNotes quadrant edge-difference algorithm.
+ * Implements quadrant edge-difference computer vision scene detection.
  */
 class VisionDetector {
   constructor(options = {}) {
@@ -143,7 +143,7 @@ class VisionDetector {
     return `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
   }
 
-  // Capture high-res screenshot with HoverNotes monospace badge
+  // Capture high-res screenshot with timestamp badge
   captureScreenshot(video) {
     if (!video) return null;
 
@@ -161,7 +161,7 @@ class VisionDetector {
 
     const formatted = this.formatTime(video.currentTime);
 
-    // Exact HoverNotes timestamp badge (content-script.js L1855-1865)
+    // High-visibility timestamp badge
     const fontSize = Math.max(16, Math.round(width / 50));
     ctx.font = `bold ${fontSize}px monospace`;
 

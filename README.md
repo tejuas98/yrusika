@@ -80,7 +80,7 @@ flowchart LR
 
 ## Feature Comparison
 
-| Capability | HoverNotes (Proprietary) | Yrusika (Open Source) |
+| Capability | Proprietary Extensions | Yrusika (Open Source) |
 | :--- | :--- | :--- |
 | **Pricing** | Subscription / 20 min free trial | **100% Free & Open Source (MIT)** |
 | **AI Backend** | Closed proprietary cloud | **Google Gemini 2.5 Flash / Local Ollama** |

@@ -1,6 +1,6 @@
 /**
  * AIClient: Direct client for Google Gemini & Local Ollama
- * Replaces HoverNotes paywalled backend with unlimited direct inference.
+ * Replaces proprietary paywalled backends with unlimited direct inference.
  */
 class AIClient {
   constructor() {
