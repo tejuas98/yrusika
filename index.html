@@ -3,22 +3,26 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Yrusika — Open-Source AI Video Note Taker & Study Station</title>
-  <meta name="description" content="Free, open-source video note-taking workstation. Docks alongside YouTube, Physics Wallah, Coursera, or local videos with timestamped notes, slide captures, and Markdown export." />
+  <title>Yrusika — Focus Video Note Taker</title>
   <link rel="icon" type="image/png" href="assets/icons/icon48.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #0b0f19;
-      --card-bg: #111827;
-      --card-border: #1f293d;
-      --text-main: #f3f4f6;
+      --bg-video: #000000;
+      --bg-dock: #0e0e11;
+      --bg-card: #141419;
+      --border-color: #22222a;
+      --border-light: #2e2e38;
+      --text-main: #f4f4f5;
       --text-muted: #9ca3af;
+      --text-dim: #71717a;
       --accent: #3b82f6;
       --accent-hover: #2563eb;
-      --accent-glow: rgba(59, 130, 246, 0.25);
-      --success: #10b981;
-      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      --green-dot: #10b981;
+      --font-ui: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
     }
 
     * {
@@ -27,849 +31,1009 @@
       padding: 0;
     }
 
-    body {
-      background-color: var(--bg);
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: var(--bg-video);
       color: var(--text-main);
-      font-family: var(--font-sans);
-      line-height: 1.5;
-      overflow-x: hidden;
+      font-family: var(--font-ui);
+      user-select: none;
     }
 
-    /* Navbar */
-    .navbar {
+    /* Full App Layout */
+    .app-container {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 1rem 2rem;
-      background: rgba(11, 15, 25, 0.85);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--card-border);
-      position: sticky;
-      top: 0;
-      z-index: 100;
+      width: 100vw;
+      height: 100vh;
+      background: var(--bg-video);
     }
 
-    .brand {
+    /* Left Side: Video Section */
+    .video-section {
+      flex: 1 1 0%;
+      min-width: 0;
+      height: 100vh;
+      background: var(--bg-video);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    /* Top Floating Controller Toolbar Area */
+    .floating-bar-wrapper {
+      position: absolute;
+      top: 14px;
+      left: 18px;
+      z-index: 50;
       display: flex;
       align-items: center;
       gap: 10px;
-      text-decoration: none;
-      color: inherit;
-      font-weight: 700;
-      font-size: 1.25rem;
-      letter-spacing: -0.5px;
     }
 
-    .brand-badge {
-      font-size: 0.7rem;
-      padding: 2px 8px;
-      background: rgba(59, 130, 246, 0.15);
-      color: #60a5fa;
-      border: 1px solid rgba(59, 130, 246, 0.3);
-      border-radius: 9999px;
-      font-weight: 600;
-      text-transform: uppercase;
-    }
-
-    .nav-links {
-      display: flex;
-      align-items: center;
-      gap: 1.5rem;
-    }
-
-    .nav-link {
-      color: var(--text-muted);
-      text-decoration: none;
-      font-size: 0.9rem;
-      font-weight: 500;
-      transition: color 0.15s;
-    }
-
-    .nav-link:hover {
-      color: var(--text-main);
-    }
-
-    .btn {
+    .floating-box {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      padding: 0.55rem 1.1rem;
+      gap: 3px;
+      background: rgba(18, 18, 22, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: 8px;
-      font-size: 0.9rem;
-      font-weight: 600;
-      text-decoration: none;
-      cursor: pointer;
+      padding: 4px 6px;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.6);
+    }
+
+    .f-btn {
+      background: transparent;
       border: 1px solid transparent;
-      transition: all 0.2s;
-    }
-
-    .btn-primary {
-      background: var(--accent);
-      color: #ffffff;
-      box-shadow: 0 4px 14px var(--accent-glow);
-    }
-
-    .btn-primary:hover {
-      background: var(--accent-hover);
-      transform: translateY(-1px);
-    }
-
-    .btn-secondary {
-      background: var(--card-bg);
-      color: var(--text-main);
-      border: 1px solid var(--card-border);
-    }
-
-    .btn-secondary:hover {
-      border-color: #374151;
-      background: #1a2234;
-    }
-
-    /* Hero */
-    .hero {
-      text-align: center;
-      padding: 4rem 1.5rem 3rem;
-      max-width: 900px;
-      margin: 0 auto;
-    }
-
-    .hero-pill {
+      color: #e4e4e7;
+      padding: 5px 8px;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      padding: 6px 14px;
-      background: rgba(16, 185, 129, 0.1);
-      border: 1px solid rgba(16, 185, 129, 0.25);
-      color: #34d399;
-      border-radius: 9999px;
-      font-size: 0.8rem;
-      font-weight: 600;
-      margin-bottom: 1.5rem;
-    }
-
-    .hero h1 {
-      font-size: 3rem;
-      font-weight: 800;
-      line-height: 1.15;
-      letter-spacing: -1px;
-      margin-bottom: 1.25rem;
-      background: linear-gradient(135deg, #ffffff 30%, #93c5fd 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .hero p {
-      font-size: 1.15rem;
-      color: var(--text-muted);
-      line-height: 1.6;
-      margin-bottom: 2rem;
-    }
-
-    .hero-actions {
-      display: flex;
       justify-content: center;
-      gap: 1rem;
-      flex-wrap: wrap;
-    }
-
-    /* Study Station Web App Section */
-    .study-station-section {
-      max-width: 1380px;
-      margin: 0 auto;
-      padding: 2rem 1.5rem 5rem;
-    }
-
-    .station-header {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 14px 14px 0 0;
-      padding: 1.25rem 1.5rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 1rem;
-    }
-
-    .url-input-group {
-      display: flex;
-      gap: 8px;
-      flex: 1 1 500px;
-      max-width: 750px;
-    }
-
-    .url-input {
-      flex: 1;
-      background: #090d16;
-      border: 1px solid #283548;
-      border-radius: 8px;
-      padding: 0.65rem 1rem;
-      color: #fff;
-      font-size: 0.9rem;
-      font-family: inherit;
-      outline: none;
-      transition: border-color 0.2s;
-    }
-
-    .url-input:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
-    }
-
-    .preset-pills {
-      display: flex;
-      gap: 6px;
-      align-items: center;
-      font-size: 0.8rem;
-      color: var(--text-muted);
-    }
-
-    .preset-btn {
-      background: #1f2937;
-      border: 1px solid #374151;
-      color: #93c5fd;
-      padding: 3px 8px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 0.75rem;
       transition: all 0.15s;
     }
 
-    .preset-btn:hover {
-      background: #2563eb;
+    .f-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
       color: #fff;
-      border-color: #2563eb;
     }
 
-    /* Split Screen Workstation */
-    .workstation {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      border: 1px solid var(--card-border);
-      border-top: none;
-      border-radius: 0 0 14px 14px;
-      background: #0d121f;
-      min-height: 680px;
-      overflow: hidden;
+    .f-btn.turtle {
+      color: #4ade80;
     }
 
-    /* Video Player Half */
-    .video-pane {
-      background: #000;
-      display: flex;
-      flex-direction: column;
-      border-right: 1px solid var(--card-border);
+    .f-btn.lightning {
+      color: #fbbf24;
     }
 
+    .f-btn.feedback-btn {
+      font-size: 0.8rem;
+      font-weight: 500;
+      padding: 4px 10px;
+      border-left: 1px solid rgba(255, 255, 255, 0.15);
+      margin-left: 4px;
+      color: #cbd5e1;
+    }
+
+    /* Video Player Viewport */
     .video-viewport {
       flex: 1;
-      position: relative;
-      background: #05070c;
+      width: 100%;
+      height: 100%;
       display: flex;
       align-items: center;
       justify-content: center;
-      min-height: 380px;
+      background: #000;
+      position: relative;
     }
 
     .video-viewport iframe,
     .video-viewport video {
       width: 100%;
       height: 100%;
-      min-height: 420px;
+      max-height: calc(100vh - 42px);
       border: none;
-    }
-
-    .player-controls {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0.75rem 1rem;
-      background: #0d121f;
-      border-top: 1px solid var(--card-border);
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .ctrl-group {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .ctrl-btn {
-      background: #1e293b;
-      color: #cbd5e1;
-      border: 1px solid #334155;
-      padding: 5px 10px;
-      border-radius: 6px;
-      font-size: 0.8rem;
-      cursor: pointer;
-      font-family: var(--font-mono);
-      transition: all 0.15s;
-    }
-
-    .ctrl-btn:hover {
-      background: #3b82f6;
-      color: #fff;
-      border-color: #3b82f6;
-    }
-
-    .time-indicator {
-      font-family: var(--font-mono);
-      font-size: 0.85rem;
-      color: #38bdf8;
-      padding: 0 4px;
-    }
-
-    /* Note Editor Half */
-    .editor-pane {
-      background: #0e1422;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .editor-topbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0.75rem 1.25rem;
-      background: #131b2e;
-      border-bottom: 1px solid var(--card-border);
-      gap: 10px;
-    }
-
-    .note-title-input {
-      background: transparent;
-      border: none;
-      color: #fff;
-      font-size: 1rem;
-      font-weight: 700;
       outline: none;
-      width: 100%;
-      max-width: 320px;
     }
 
-    .note-title-input:focus {
-      border-bottom: 1px solid var(--accent);
+    /* Subtitle Caption Overlay */
+    .video-caption-overlay {
+      position: absolute;
+      bottom: 22px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.9);
+      color: #ffffff;
+      padding: 5px 14px;
+      border-radius: 5px;
+      font-size: 0.92rem;
+      font-weight: 500;
+      letter-spacing: 0.1px;
+      pointer-events: none;
+      z-index: 30;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+      transition: opacity 0.3s;
     }
 
-    .vault-indicator {
-      display: inline-flex;
+    /* Video Footer Learning Streak */
+    .video-footer {
+      height: 42px;
+      display: flex;
       align-items: center;
-      gap: 6px;
-      font-size: 0.75rem;
-      color: #34d399;
+      justify-content: space-between;
+      padding: 0 1.5rem;
+      background: #000;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      font-size: 0.82rem;
+      color: var(--text-muted);
       font-family: var(--font-mono);
     }
 
-    .editor-toolbar {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 0.5rem 1.25rem;
-      background: #090e18;
-      border-bottom: 1px solid var(--card-border);
-      flex-wrap: wrap;
+    .video-footer strong {
+      color: #f4f4f5;
+      font-weight: 600;
     }
 
-    .action-btn {
-      background: #172033;
-      border: 1px solid #28354c;
-      color: #e2e8f0;
-      padding: 4px 10px;
+    .url-change-pill {
+      background: #18181b;
+      border: 1px solid #27272a;
+      color: #93c5fd;
+      padding: 3px 10px;
       border-radius: 6px;
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       cursor: pointer;
+      font-family: var(--font-ui);
       display: inline-flex;
       align-items: center;
       gap: 5px;
       transition: all 0.15s;
     }
 
-    .action-btn:hover {
-      background: var(--accent);
+    .url-change-pill:hover {
+      background: #27272a;
       color: #fff;
-      border-color: var(--accent);
     }
 
-    .action-btn.accent {
-      background: rgba(59, 130, 246, 0.2);
-      border-color: rgba(59, 130, 246, 0.4);
-      color: #60a5fa;
+    /* Right Side: Yrusika Note Workstation Dock */
+    .dock-section {
+      flex: 0 0 520px;
+      width: 520px;
+      height: 100vh;
+      background: var(--bg-dock);
+      border-left: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      position: relative;
     }
 
-    .note-textarea {
-      flex: 1;
-      width: 100%;
-      height: 100%;
-      min-height: 400px;
+    /* Dock Header */
+    .dock-header {
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .dock-breadcrumbs {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.88rem;
+      color: #e4e4e7;
+      font-weight: 600;
+      letter-spacing: -0.2px;
+    }
+
+    .dock-breadcrumbs span.chevron {
+      color: #71717a;
+      font-size: 0.85rem;
+      font-weight: 400;
+    }
+
+    .dock-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .icon-btn {
       background: transparent;
       border: none;
-      color: #e2e8f0;
-      padding: 1.25rem;
-      font-family: var(--font-mono);
-      font-size: 0.95rem;
-      line-height: 1.7;
-      resize: none;
-      outline: none;
+      color: #a1a1aa;
+      cursor: pointer;
+      padding: 6px;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
     }
 
-    .note-textarea::placeholder {
-      color: #4b5563;
+    .icon-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
     }
 
-    /* Architecture Flowchart Section */
-    .flowchart-section {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 3rem 1.5rem;
-      text-align: center;
+    /* Exit Video Mode Button */
+    .exit-mode-row {
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: center;
     }
 
-    .flowchart-section h2 {
-      font-size: 2.2rem;
-      margin-bottom: 0.75rem;
-      letter-spacing: -0.5px;
+    .exit-video-btn {
+      width: 100%;
+      background: #18181d;
+      border: 1px solid #272730;
+      color: #e4e4e7;
+      padding: 7px 14px;
+      border-radius: 7px;
+      font-size: 0.83rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.15s;
     }
 
-    .flowchart-section p {
-      color: var(--text-muted);
-      margin-bottom: 2rem;
-      max-width: 700px;
-      margin-left: auto;
-      margin-right: auto;
+    .exit-video-btn:hover {
+      background: #22222a;
+      border-color: #3f3f4e;
+      color: #fff;
     }
 
-    .flowchart-card {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 16px;
-      padding: 2rem;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-      display: inline-block;
-      max-width: 100%;
+    /* Vault Row */
+    .vault-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 14px;
+      border-bottom: 1px solid var(--border-color);
     }
 
-    .flowchart-card img {
-      max-width: 100%;
-      height: auto;
+    .vault-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #141419;
+      border: 1px solid #272730;
+      color: #e4e4e7;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .vault-dot {
+      width: 7px;
+      height: 7px;
+      background: var(--green-dot);
+      border-radius: 50%;
+      box-shadow: 0 0 6px rgba(16, 185, 129, 0.5);
+    }
+
+    .vault-actions {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .v-action-btn {
+      background: transparent;
+      border: none;
+      color: #94a3b8;
+      padding: 5px;
+      border-radius: 5px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.15s;
+    }
+
+    .v-action-btn:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    /* Note Editor Body */
+    .note-editor-body {
+      flex: 1;
+      padding: 1.25rem 1.4rem;
+      overflow-y: auto;
+      position: relative;
+      font-family: var(--font-ui);
+      user-select: text;
+    }
+
+    /* Floating Tab in Right Margin (Document / Audio Wave) */
+    .note-side-toolbar {
+      position: absolute;
+      top: 1.4rem;
+      right: 14px;
+      display: flex;
+      flex-direction: column;
+      background: #18181f;
+      border: 1px solid #2a2a36;
+      border-radius: 6px;
+      overflow: hidden;
+      z-index: 20;
+    }
+
+    .note-side-btn {
+      background: transparent;
+      border: none;
+      color: #9ca3af;
+      padding: 5px 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+    }
+
+    .note-side-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+
+    .note-side-btn + .note-side-btn {
+      border-top: 1px solid #2a2a36;
+    }
+
+    /* Slide Keyframe Card */
+    .slide-card {
+      background: #000;
+      border: 1px solid #272730;
       border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 0.9rem;
+      position: relative;
+      max-width: 92%;
     }
 
-    /* Footer */
-    footer {
-      border-top: 1px solid var(--card-border);
-      padding: 2.5rem 1.5rem;
-      text-align: center;
-      color: var(--text-muted);
-      font-size: 0.85rem;
+    .slide-card img {
+      width: 100%;
+      height: auto;
+      display: block;
+      aspect-ratio: 16/9;
+      object-fit: cover;
+      background: #1a1a24;
     }
 
-    footer a {
-      color: #60a5fa;
-      text-decoration: none;
+    .timestamp-badge-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.82rem;
+      color: #38bdf8;
+      font-family: var(--font-mono);
+      font-weight: 600;
+      margin-bottom: 0.8rem;
+      cursor: pointer;
+      width: fit-content;
     }
 
-    footer a:hover {
+    .timestamp-badge-row:hover {
       text-decoration: underline;
     }
 
-    /* Responsive */
-    @media (max-width: 900px) {
-      .workstation {
-        grid-template-columns: 1fr;
+    .note-text-block {
+      font-size: 0.93rem;
+      color: #e4e4e7;
+      line-height: 1.7;
+      outline: none;
+    }
+
+    .note-text-block p {
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+
+    .bullet-dot {
+      color: #71717a;
+      font-size: 1.1rem;
+      line-height: 1;
+    }
+
+    /* Mascot Button (Bottom Right of Note area) */
+    .mascot-button {
+      position: absolute;
+      bottom: 58px;
+      right: 18px;
+      width: 36px;
+      height: 36px;
+      background: #2563eb;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.5);
+      cursor: pointer;
+      transition: transform 0.2s;
+      z-index: 10;
+      border: 2px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .mascot-button:hover {
+      transform: scale(1.1);
+    }
+
+    .mascot-button img {
+      width: 24px;
+      height: 24px;
+      object-fit: contain;
+    }
+
+    /* Scrub Bar above footer */
+    .scrub-bar {
+      height: 38px;
+      background: #0a0a0d;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 0.8rem;
+    }
+
+    .scrub-speed {
+      font-size: 0.78rem;
+      color: #94a3b8;
+      background: #16161c;
+      border: 1px solid #2a2a34;
+      padding: 2px 7px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: var(--font-mono);
+    }
+
+    .scrub-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .vol-track {
+      width: 70px;
+      height: 3px;
+      background: #272730;
+      border-radius: 2px;
+      position: relative;
+      cursor: pointer;
+    }
+
+    .vol-fill {
+      width: 75%;
+      height: 100%;
+      background: #3b82f6;
+      border-radius: 2px;
+      position: relative;
+    }
+
+    .vol-fill::after {
+      content: '';
+      position: absolute;
+      right: -3px;
+      top: -3px;
+      width: 9px;
+      height: 9px;
+      background: #fff;
+      border-radius: 50%;
+    }
+
+    /* Dock Footer Action Bar */
+    .dock-footer {
+      height: 48px;
+      background: var(--bg-dock);
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 0.8rem;
+    }
+
+    .dock-footer-left {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .dock-footer-right {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .footer-action-btn {
+      background: transparent;
+      border: none;
+      color: #9ca3af;
+      padding: 6px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+    }
+
+    .footer-action-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+    }
+
+    .footer-action-btn.camera-active {
+      color: #e4e4e7;
+    }
+
+    .footer-pill-btn {
+      background: #14141a;
+      border: 1px solid #262630;
+      color: #d4d4d8;
+      padding: 4px 9px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+    }
+
+    .footer-pill-btn:hover {
+      background: #1e1e26;
+      color: #fff;
+    }
+
+    /* Modal for URL Changing */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.78);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(5px);
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-box {
+      background: #131318;
+      border: 1px solid #282834;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 520px;
+      padding: 1.5rem;
+      box-shadow: 0 16px 36px rgba(0,0,0,0.8);
+    }
+
+    .modal-box h3 {
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+      color: #fff;
+    }
+
+    .modal-box p {
+      font-size: 0.85rem;
+      color: #a1a1aa;
+      margin-bottom: 1.2rem;
+    }
+
+    .modal-input {
+      width: 100%;
+      background: #09090c;
+      border: 1px solid #2e2e3a;
+      border-radius: 8px;
+      padding: 0.7rem 1rem;
+      color: #fff;
+      font-size: 0.9rem;
+      outline: none;
+      margin-bottom: 1rem;
+    }
+
+    .modal-input:focus {
+      border-color: #3b82f6;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .modal-btn {
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      font-weight: 500;
+      border: none;
+    }
+
+    .modal-btn.primary {
+      background: #3b82f6;
+      color: #fff;
+    }
+
+    .modal-btn.secondary {
+      background: #272730;
+      color: #e4e4e7;
+    }
+
+    /* Responsive for mobile portrait */
+    @media (max-width: 860px) {
+      .app-container {
+        flex-direction: column;
       }
-      .video-pane {
-        border-right: none;
-        border-bottom: 1px solid var(--card-border);
+      .video-section {
+        height: 42vh;
+        min-height: 240px;
       }
-      .hero h1 {
-        font-size: 2.2rem;
+      .dock-section {
+        width: 100%;
+        height: 58vh;
       }
     }
   </style>
 </head>
 <body>
 
-  <!-- Top Navbar -->
-  <nav class="navbar">
-    <a href="#" class="brand">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <polygon points="5 3 19 12 5 21 5 3"></polygon>
-      </svg>
-      <span>Yrusika</span>
-      <span class="brand-badge">Open Source</span>
-    </a>
-    <div class="nav-links">
-      <a href="#study-station" class="nav-link">Web Study Station</a>
-      <a href="#architecture" class="nav-link">Architecture</a>
-      <a href="https://github.com/tejuas98/yrusika" target="_blank" class="nav-link">GitHub</a>
-      <a href="https://github.com/tejuas98/yrusika/archive/refs/heads/main.zip" class="btn btn-primary">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-          <polyline points="7 10 12 15 17 10"></polyline>
-          <line x1="12" y1="15" x2="12" y2="3"></line>
-        </svg>
-        <span>Download Extension</span>
-      </a>
-    </div>
-  </nav>
+  <div class="app-container">
 
-  <!-- Hero Header -->
-  <header class="hero">
-    <div class="hero-pill">
-      <span>100% Free Forever &middot; Zero Paywalls &middot; Local First</span>
-    </div>
-    <h1>Study Any Video with AI-Powered Visual Notes</h1>
-    <p>
-      An open-source, subscription-free lecture workstation for YouTube, Physics Wallah, Coursera, or offline video files. Dock alongside your lectures with burned timestamps, slide captures, and instant Markdown export.
-    </p>
-    <div class="hero-actions">
-      <a href="#study-station" class="btn btn-primary" style="padding: 0.75rem 1.5rem; font-size: 1rem;">
-        Launch Web Study Station
-      </a>
-      <a href="https://github.com/tejuas98/yrusika" target="_blank" class="btn btn-secondary" style="padding: 0.75rem 1.5rem; font-size: 1rem;">
-        View on GitHub
-      </a>
-    </div>
-  </header>
+    <!-- Left Half: Video Player -->
+    <div class="video-section">
 
-  <!-- Interactive Study Station Web App -->
-  <section id="study-station" class="study-station-section">
-    <!-- URL / Source Input Bar -->
-    <div class="station-header">
-      <div class="url-input-group">
-        <input 
-          type="text" 
-          id="videoUrlInput" 
-          class="url-input" 
-          placeholder="Paste YouTube video link (e.g., https://www.youtube.com/watch?v=tgGNwG_UxFo)..."
-          value="https://www.youtube.com/watch?v=tgGNwG_UxFo"
-        />
-        <button id="loadVideoBtn" class="btn btn-primary">Load Lecture</button>
-      </div>
-      
-      <div class="preset-pills">
-        <span>Try sample:</span>
-        <button class="preset-btn" onclick="loadPreset('https://www.youtube.com/watch?v=tgGNwG_UxFo', 'Tour of Go Tutorial')">Go Backend</button>
-        <button class="preset-btn" onclick="loadPreset('https://www.youtube.com/watch?v=aircAruvnKk', '3Blue1Brown Neural Networks')">Math & AI</button>
-        <label for="localFileInput" class="preset-btn" style="background:#047857; color:#fff; border-color:#059669;">
-          Open Local MP4
-        </label>
-        <input type="file" id="localFileInput" accept="video/mp4,video/webm,video/ogg" style="display:none;" />
-      </div>
-    </div>
-
-    <!-- Side-by-Side Study Dock -->
-    <div class="workstation">
-      
-      <!-- Video Half -->
-      <div class="video-pane">
-        <div class="video-viewport" id="videoViewport">
-          <iframe 
-            id="youtubePlayer"
-            src="https://www.youtube.com/embed/tgGNwG_UxFo?enablejsapi=1" 
-            title="Video Player"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-            allowfullscreen>
-          </iframe>
-          <video id="localVideoPlayer" controls style="display:none;"></video>
-        </div>
-
-        <div class="player-controls">
-          <div class="ctrl-group">
-            <button class="ctrl-btn" id="seekBackBtn">-10s</button>
-            <button class="ctrl-btn" id="playPauseBtn">Play / Pause</button>
-            <button class="ctrl-btn" id="seekForwardBtn">+10s</button>
-            <span class="time-indicator" id="playbackTime">00:00</span>
-          </div>
-
-          <div class="ctrl-group">
-            <span style="font-size:0.75rem; color:#94a3b8;">Speed:</span>
-            <button class="ctrl-btn" onclick="setSpeed(0.8)">0.8x</button>
-            <button class="ctrl-btn" onclick="setSpeed(1.0)">1.0x</button>
-            <button class="ctrl-btn" onclick="setSpeed(1.5)">1.5x</button>
-            <button class="ctrl-btn" onclick="setSpeed(2.0)">2.0x</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Notes Dock Half -->
-      <div class="editor-pane">
-        <div class="editor-topbar">
-          <input type="text" id="noteTitle" class="note-title-input" value="Go Basics & Architecture Notes" />
-          <div class="vault-indicator">
-            <span style="display:inline-block; width:8px; height:8px; background:#10b981; border-radius:50%;"></span>
-            <span>Local Auto-Save: Active</span>
-          </div>
-        </div>
-
-        <div class="editor-toolbar">
-          <button class="action-btn accent" id="insertTimestampBtn">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="10"></circle>
-              <polyline points="12 6 12 12 16 14"></polyline>
-            </svg>
-            <span>+ Timestamp</span>
+      <!-- Top Floating Controller Toolbar -->
+      <div class="floating-bar-wrapper">
+        <!-- Box 1: Close & Hide -->
+        <div class="floating-box">
+          <button class="f-btn" title="Exit Focus Mode" onclick="alert('Focus Mode Active')">&times;</button>
+          <button class="f-btn" id="hideBtn" title="Hide (V)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
           </button>
-          <button class="action-btn" onclick="insertMarkdown('# ')">H1</button>
-          <button class="action-btn" onclick="insertMarkdown('## ')">H2</button>
-          <button class="action-btn" onclick="insertMarkdown('- [ ] ')">Task</button>
-          <button class="action-btn" onclick="insertMarkdown('```go\n// code here\n```\n')">Code</button>
-          <button class="action-btn" onclick="insertMarkdown('$$\nE = mc^2\n$$\n')">Math</button>
-          
-          <div style="margin-left: auto; display:flex; gap:6px;">
-            <button class="action-btn" id="exportMdBtn">Export .md</button>
-            <button class="action-btn" id="copyNotesBtn">Copy</button>
-          </div>
         </div>
 
-        <textarea 
-          id="noteTextarea" 
-          class="note-textarea" 
-          placeholder="Type your notes here, press '+ Timestamp' to pin key moments, or write Markdown..."
-        ># Tour of Go — System Architecture & Fundamentals
+        <!-- Box 2: Speed, Playback & Volume -->
+        <div class="floating-box">
+          <button class="f-btn turtle" id="turtleBtn" title="Slow (0.8x)">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="6"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4M6 6l2.8 2.8M15.2 15.2L18 18M6 18l2.8-2.8M15.2 8.8L18 6"/></svg>
+          </button>
+          <button class="f-btn lightning" id="lightningBtn" title="Fast (1.5x)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          </button>
+          <button class="f-btn" id="jumpStartBtn" title="Start (0:00)">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="5" width="2" height="14"/><polygon points="19,5 8,12 19,19"/></svg>
+          </button>
+          <button class="f-btn" id="rewindBtn" title="Rewind 10s (Z)">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="11,5 2,12 11,19"/><polygon points="20,5 11,12 20,19"/></svg>
+          </button>
+          <button class="f-btn" id="forwardBtn" title="Forward 10s (X)">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="4,5 13,12 4,19"/><polygon points="13,5 22,12 13,19"/></svg>
+          </button>
+          <button class="f-btn" id="jumpEndBtn" title="End">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,5 16,12 5,19"/><rect x="19" y="5" width="2" height="14"/></svg>
+          </button>
+          <button class="f-btn" id="volDownBtn" title="Volume Down">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/></svg>
+          </button>
+          <button class="f-btn" id="muteBtn" title="Mute">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/></svg>
+          </button>
+          <button class="f-btn" id="volUpBtn" title="Volume Up">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+          </button>
+          <button class="f-btn feedback-btn" onclick="window.open('https://github.com/tejuas98/yrusika/issues', '_blank')">Feedback</button>
+        </div>
+      </div>
 
-- **Source Lecture**: Go Basics Walkthrough
-- **Mode**: Desktop Web Study Station
+      <!-- Video Player Viewport -->
+      <div class="video-viewport">
+        <iframe 
+          id="ytIframe"
+          src="https://www.youtube.com/embed/tgGNwG_UxFo?enablejsapi=1&autoplay=1&rel=0" 
+          title="Video Player"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+          allowfullscreen>
+        </iframe>
+        <video id="htmlVideo" controls style="display:none; width:100%; height:100%;"></video>
 
-## [01:40] Core Topics & Scope
-- Walkthrough of Go fundamental types, memory allocation, and concurrency routines.
-- Prerequisites: Basic knowledge of command line and programming logic.
+        <!-- Dynamic Caption Box -->
+        <div class="video-caption-overlay" id="captionOverlay">series of steps that we are going to follow</div>
+      </div>
 
-## [03:15] Variables & Type Inference
-```go
-package main
-
-import "fmt"
-
-func main() {
-    message := "Welcome to Yrusika"
-    fmt.Println(message)
-}
-```
-
-## [08:30] Key Insights
-- Go routines are lightweight threads managed by the Go runtime rather than kernel threads.
-- Channels provide type-safe synchronization without explicit mutex locking.
-</textarea>
+      <!-- Video Footer Learning Streak -->
+      <div class="video-footer">
+        <div>
+          <strong>14m</strong> today &middot; <strong>1</strong> day this week
+        </div>
+        <button class="url-change-pill" id="openUrlModalBtn">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          <span>Change Video / URL</span>
+        </button>
       </div>
 
     </div>
-  </section>
 
-  <!-- Flowchart Architecture Section -->
-  <section id="architecture" class="flowchart-section">
-    <h2>Yrusika Ecosystem Architecture</h2>
-    <p>
-      Seamless dual-workflow: run the desktop extension locally inside YouTube and PW, or use the web study app on any device with zero setup.
-    </p>
-    <div class="flowchart-card">
-      <img src="assets/flowchart.png" alt="Yrusika Ecosystem Flowchart" />
+    <!-- Right Half: Yrusika Note-Taking Dock -->
+    <div class="dock-section">
+
+      <!-- Dock Header -->
+      <div class="dock-header">
+        <div class="dock-breadcrumbs">
+          <span class="chevron">&lsaquo;</span>
+          <span>Yrusika</span>
+          <span class="chevron">&rsaquo;</span>
+        </div>
+        <div class="dock-header-actions">
+          <button class="icon-btn" id="themeToggleBtn" title="Theme">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          </button>
+          <button class="icon-btn" id="closeDockBtn" title="Close Dock">&times;</button>
+        </div>
+      </div>
+
+      <!-- Exit Video Mode Pill -->
+      <div class="exit-mode-row">
+        <button class="exit-video-btn" onclick="alert('In Focus Mode')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+          Exit Video Mode
+        </button>
+      </div>
+
+      <!-- Vault Row -->
+      <div class="vault-row">
+        <div class="vault-badge" id="vaultPill">
+          <span class="vault-dot"></span>
+          <span>Vault: notes</span>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+        </div>
+
+        <div class="vault-actions">
+          <button class="v-action-btn" title="Open Link" id="openLinkIcon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></button>
+          <button class="v-action-btn" title="New Note" id="newNoteIcon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg></button>
+          <button class="v-action-btn" title="Copy Notes" id="copyNoteIcon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button>
+          <button class="v-action-btn" title="History" id="historyIcon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 14 14"/></svg></button>
+          <button class="v-action-btn" title="Export Markdown" id="exportIcon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></button>
+          <button class="v-action-btn" title="Settings" id="settingsIcon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
+        </div>
+      </div>
+
+      <!-- Note Editor Body -->
+      <div class="note-editor-body" id="noteEditorBody">
+        
+        <!-- Right Margin Floating Icon Tab -->
+        <div class="note-side-toolbar">
+          <button class="note-side-btn" title="Document Notes">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          </button>
+          <button class="note-side-btn" title="Audio Transcript">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 10v4M6 6v12M10 3v18M14 8v8M18 5v14M22 10v4"/></svg>
+          </button>
+        </div>
+
+        <!-- Video Slide Snapshot Card -->
+        <div class="slide-card">
+          <img id="keyframeImg" src="assets/slide-sample.png" onerror="this.src='https://img.youtube.com/vi/tgGNwG_UxFo/hqdefault.jpg'" alt="Slide Keyframe" />
+        </div>
+
+        <!-- Timestamp Link Badge -->
+        <div class="timestamp-badge-row" onclick="seekToSeconds(118)">
+          <span>&#9654;</span>
+          <span>00:01:58</span>
+        </div>
+
+        <!-- Editable Note Points -->
+        <div class="note-text-block" id="editableNoteContent" contenteditable="true" spellcheck="false">
+          <p><span class="bullet-dot">&bull;</span> <span>A resource used to guide the learning process</span></p>
+          <p><span class="bullet-dot">&bull;</span> <span>Features an interactive playground to run code in a sandbox</span></p>
+        </div>
+
+      </div>
+
+      <!-- Mascot Button (Bottom Right) -->
+      <div class="mascot-button" title="Yrusika AI Assistant">
+        <img src="assets/icons/icon48.png" alt="Mascot" />
+      </div>
+
+      <!-- Scrub Bar -->
+      <div class="scrub-bar">
+        <button class="scrub-speed" id="scrubSpeedBtn">1x</button>
+        <div class="scrub-controls">
+          <button class="icon-btn" id="scrubUndo" title="Undo"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg></button>
+          <button class="icon-btn" id="scrubPlayPause" title="Play / Pause"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></button>
+          <button class="icon-btn" id="scrubRedo" title="Redo"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 7v6h-6"/><path d="M3 17a9 9 0 0 1 9-9 9 9 0 0 1 6 2.3l3 2.7"/></svg></button>
+          <button class="icon-btn" title="Volume"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></button>
+          <div class="vol-track"><div class="vol-fill"></div></div>
+          <button class="icon-btn" title="Info"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></button>
+        </div>
+      </div>
+
+      <!-- Dock Footer Action Bar -->
+      <div class="dock-footer">
+        <div class="dock-footer-left">
+          <button class="footer-action-btn" title="Fullscreen" onclick="document.documentElement.requestFullscreen()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg></button>
+          <button class="footer-action-btn" title="Video Mode Settings" id="footerSettingsBtn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
+          <button class="footer-action-btn" title="Insert Timestamp" id="footerClockBtn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></button>
+          <button class="footer-action-btn camera-active" title="Capture Frame" id="footerCameraBtn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></button>
+        </div>
+
+        <div class="dock-footer-right">
+          <button class="footer-pill-btn"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> EN &blacktriangledown;</button>
+          <button class="footer-pill-btn">&#25991;A EN &blacktriangledown;</button>
+        </div>
+      </div>
+
     </div>
-  </section>
 
-  <!-- Footer -->
-  <footer>
-    <p>
-      Yrusika is an open-source project released under the <a href="LICENSE">MIT License</a>.
-      &middot; 
-      <a href="https://github.com/tejuas98/yrusika" target="_blank">GitHub Repository</a>
-      &middot;
-      <a href="https://github.com/tejuas98/yrusika/issues" target="_blank">Issues & Feedback</a>
-    </p>
-  </footer>
+  </div>
+
+  <!-- Video URL Switcher Modal -->
+  <div class="modal-overlay" id="urlModal">
+    <div class="modal-box">
+      <h3>Change Lecture Video</h3>
+      <p>Paste any YouTube URL or load a local MP4 lecture video file.</p>
+      
+      <input type="text" id="newVideoUrl" class="modal-input" placeholder="https://www.youtube.com/watch?v=..." value="https://www.youtube.com/watch?v=tgGNwG_UxFo" />
+      
+      <div style="margin-bottom: 1.2rem;">
+        <label for="localFile" class="modal-btn secondary" style="display:inline-block; padding:8px 12px; cursor:pointer;">
+          📁 Choose Local MP4 Video
+        </label>
+        <input type="file" id="localFile" accept="video/mp4,video/webm" style="display:none;" />
+      </div>
+
+      <div class="modal-actions">
+        <button class="modal-btn secondary" onclick="closeModal()">Cancel</button>
+        <button class="modal-btn primary" id="confirmUrlBtn">Load Lecture</button>
+      </div>
+    </div>
+  </div>
 
   <script>
-    // State
-    let currentSeconds = 100;
-    let isPlaying = false;
-    let timer = null;
+    let activeSeconds = 118;
+    let currentSpeed = 1.0;
+    let currentVidId = "tgGNwG_UxFo";
 
-    // Elements
-    const urlInput = document.getElementById("videoUrlInput");
-    const loadBtn = document.getElementById("loadVideoBtn");
-    const ytPlayer = document.getElementById("youtubePlayer");
-    const localVideo = document.getElementById("localVideoPlayer");
-    const localFileInput = document.getElementById("localFileInput");
-    const textarea = document.getElementById("noteTextarea");
-    const timeDisplay = document.getElementById("playbackTime");
-    const timestampBtn = document.getElementById("insertTimestampBtn");
-    const exportMdBtn = document.getElementById("exportMdBtn");
-    const copyNotesBtn = document.getElementById("copyNotesBtn");
+    const yt = document.getElementById("ytIframe");
+    const htmlVid = document.getElementById("htmlVideo");
+    const editor = document.getElementById("editableNoteContent");
+    const keyframe = document.getElementById("keyframeImg");
+    const modal = document.getElementById("urlModal");
 
-    // Format seconds to mm:ss
-    function formatTime(sec) {
-      const m = Math.floor(sec / 60);
-      const s = Math.floor(sec % 60);
-      return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
-    }
+    // Modal controls
+    document.getElementById("openUrlModalBtn").onclick = () => modal.classList.add("active");
+    document.getElementById("openLinkIcon").onclick = () => modal.classList.add("active");
+    function closeModal() { modal.classList.remove("active"); }
 
-    // Parse YouTube URL to Video ID
-    function extractYouTubeId(url) {
+    document.getElementById("confirmUrlBtn").onclick = () => {
+      const url = document.getElementById("newVideoUrl").value.trim();
       const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
-      return match ? match[1] : null;
-    }
-
-    // Load Video
-    function loadVideo(url) {
-      const vid = extractYouTubeId(url);
-      if (vid) {
-        localVideo.style.display = "none";
-        localVideo.pause();
-        ytPlayer.style.display = "block";
-        ytPlayer.src = `https://www.youtube.com/embed/${vid}?enablejsapi=1&autoplay=1`;
-        currentSeconds = 0;
-        timeDisplay.textContent = "00:00";
+      if (match) {
+        currentVidId = match[1];
+        htmlVid.style.display = "none";
+        htmlVid.pause();
+        yt.style.display = "block";
+        yt.src = `https://www.youtube.com/embed/${currentVidId}?enablejsapi=1&autoplay=1&rel=0`;
+        keyframe.src = `https://img.youtube.com/vi/${currentVidId}/hqdefault.jpg`;
+        closeModal();
       } else {
-        alert("Please enter a valid YouTube video link.");
+        alert("Please enter a valid YouTube link.");
       }
-    }
-
-    loadBtn.addEventListener("click", () => {
-      loadVideo(urlInput.value.trim());
-    });
-
-    urlInput.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") loadVideo(urlInput.value.trim());
-    });
-
-    // Preset loading
-    window.loadPreset = function(url, title) {
-      urlInput.value = url;
-      document.getElementById("noteTitle").value = title;
-      loadVideo(url);
     };
 
-    // Local MP4 file loading
-    localFileInput.addEventListener("change", (e) => {
+    // Local Video
+    document.getElementById("localFile").onchange = (e) => {
       const file = e.target.files[0];
       if (file) {
-        ytPlayer.style.display = "none";
-        localVideo.style.display = "block";
-        localVideo.src = URL.createObjectURL(file);
-        localVideo.play();
-        document.getElementById("noteTitle").value = file.name.replace(/\.[^/.]+$/, "");
-      }
-    });
-
-    // Local Video time updates
-    localVideo.addEventListener("timeupdate", () => {
-      currentSeconds = localVideo.currentTime;
-      timeDisplay.textContent = formatTime(currentSeconds);
-    });
-
-    // Speed Control
-    window.setSpeed = function(rate) {
-      if (localVideo.style.display !== "none") {
-        localVideo.playbackRate = rate;
-      } else {
-        // Send postMessage to YouTube IFrame API
-        ytPlayer.contentWindow.postMessage(JSON.stringify({
-          event: "command",
-          func: "setPlaybackRate",
-          args: [rate]
-        }), "*");
+        yt.style.display = "none";
+        htmlVid.style.display = "block";
+        htmlVid.src = URL.createObjectURL(file);
+        htmlVid.play();
+        closeModal();
       }
     };
 
-    // Seek buttons
-    document.getElementById("seekBackBtn").addEventListener("click", () => {
-      if (localVideo.style.display !== "none") {
-        localVideo.currentTime = Math.max(0, localVideo.currentTime - 10);
+    // Controller actions
+    function seekToSeconds(sec) {
+      activeSeconds = sec;
+      if (htmlVid.style.display !== "none") {
+        htmlVid.currentTime = sec;
       } else {
-        ytPlayer.contentWindow.postMessage(JSON.stringify({
-          event: "command",
-          func: "seekTo",
-          args: [Math.max(0, currentSeconds - 10), true]
-        }), "*");
-        currentSeconds = Math.max(0, currentSeconds - 10);
-        timeDisplay.textContent = formatTime(currentSeconds);
+        yt.contentWindow.postMessage(JSON.stringify({ event: "command", func: "seekTo", args: [sec, true] }), "*");
       }
-    });
-
-    document.getElementById("seekForwardBtn").addEventListener("click", () => {
-      if (localVideo.style.display !== "none") {
-        localVideo.currentTime += 10;
-      } else {
-        currentSeconds += 10;
-        ytPlayer.contentWindow.postMessage(JSON.stringify({
-          event: "command",
-          func: "seekTo",
-          args: [currentSeconds, true]
-        }), "*");
-        timeDisplay.textContent = formatTime(currentSeconds);
-      }
-    });
-
-    document.getElementById("playPauseBtn").addEventListener("click", () => {
-      if (localVideo.style.display !== "none") {
-        if (localVideo.paused) localVideo.play(); else localVideo.pause();
-      } else {
-        isPlaying = !isPlaying;
-        const func = isPlaying ? "playVideo" : "pauseVideo";
-        ytPlayer.contentWindow.postMessage(JSON.stringify({ event: "command", func: func, args: [] }), "*");
-      }
-    });
-
-    // Insert Timestamp Button
-    timestampBtn.addEventListener("click", () => {
-      const stamp = `\n## [${formatTime(currentSeconds)}] `;
-      const start = textarea.selectionStart;
-      const end = textarea.selectionEnd;
-      const val = textarea.value;
-      textarea.value = val.substring(0, start) + stamp + val.substring(end);
-      textarea.selectionStart = textarea.selectionEnd = start + stamp.length;
-      textarea.focus();
-      saveNotes();
-    });
-
-    // Formatting insertion
-    window.insertMarkdown = function(syntax) {
-      const start = textarea.selectionStart;
-      const end = textarea.selectionEnd;
-      const val = textarea.value;
-      textarea.value = val.substring(0, start) + syntax + val.substring(end);
-      textarea.selectionStart = textarea.selectionEnd = start + syntax.length;
-      textarea.focus();
-      saveNotes();
-    };
-
-    // Auto-Save in LocalStorage
-    function saveNotes() {
-      localStorage.setItem("yrusika_web_notes", textarea.value);
-      localStorage.setItem("yrusika_web_title", document.getElementById("noteTitle").value);
     }
-    textarea.addEventListener("input", saveNotes);
-    document.getElementById("noteTitle").addEventListener("input", saveNotes);
 
-    // Restore on load
-    window.addEventListener("DOMContentLoaded", () => {
-      const saved = localStorage.getItem("yrusika_web_notes");
-      const savedTitle = localStorage.getItem("yrusika_web_title");
-      if (saved) textarea.value = saved;
-      if (savedTitle) document.getElementById("noteTitle").value = savedTitle;
-    });
+    document.getElementById("rewindBtn").onclick = () => seekToSeconds(Math.max(0, activeSeconds - 10));
+    document.getElementById("forwardBtn").onclick = () => seekToSeconds(activeSeconds + 10);
+    document.getElementById("jumpStartBtn").onclick = () => seekToSeconds(0);
+    document.getElementById("jumpEndBtn").onclick = () => seekToSeconds(350);
 
-    // Export .md
-    exportMdBtn.addEventListener("click", () => {
-      const title = document.getElementById("noteTitle").value.trim() || "yrusika_notes";
-      const blob = new Blob([textarea.value], { type: "text/markdown;charset=utf-8" });
+    // Speed buttons
+    document.getElementById("turtleBtn").onclick = () => setSpeed(0.8);
+    document.getElementById("lightningBtn").onclick = () => setSpeed(1.5);
+    document.getElementById("scrubSpeedBtn").onclick = () => {
+      const speeds = [1.0, 1.25, 1.5, 1.75, 2.0];
+      let next = speeds[(speeds.indexOf(currentSpeed) + 1) % speeds.length];
+      setSpeed(next);
+    };
+
+    function setSpeed(rate) {
+      currentSpeed = rate;
+      document.getElementById("scrubSpeedBtn").textContent = `${rate}x`;
+      if (htmlVid.style.display !== "none") {
+        htmlVid.playbackRate = rate;
+      } else {
+        yt.contentWindow.postMessage(JSON.stringify({ event: "command", func: "setPlaybackRate", args: [rate] }), "*");
+      }
+    }
+
+    // Timestamp & Camera Snapshot in Editor
+    function formatTime(s) {
+      const m = Math.floor(s / 60);
+      const sec = Math.floor(s % 60);
+      return `${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
+    }
+
+    document.getElementById("footerClockBtn").onclick = () => {
+      const stamp = `<p class="timestamp-badge-row" onclick="seekToSeconds(${activeSeconds})"><span>&#9654;</span> <span>${formatTime(activeSeconds)}</span></p><p><span class="bullet-dot">&bull;</span> <span>Key insight captured at ${formatTime(activeSeconds)}</span></p>`;
+      editor.innerHTML += stamp;
+      editor.scrollTop = editor.scrollHeight;
+    };
+
+    document.getElementById("footerCameraBtn").onclick = () => {
+      activeSeconds += 25;
+      const card = `<div class="slide-card"><img src="https://img.youtube.com/vi/${currentVidId}/hqdefault.jpg" /></div><div class="timestamp-badge-row" onclick="seekToSeconds(${activeSeconds})"><span>&#9654;</span> <span>${formatTime(activeSeconds)}</span></div><p><span class="bullet-dot">&bull;</span> <span>Frame snapshot captured at ${formatTime(activeSeconds)}</span></p>`;
+      editor.innerHTML += card;
+      editor.scrollTop = editor.scrollHeight;
+    };
+
+    // Export Markdown
+    document.getElementById("exportIcon").onclick = () => {
+      const txt = editor.innerText;
+      const blob = new Blob([txt], { type: "text/markdown" });
       const a = document.createElement("a");
       a.href = URL.createObjectURL(blob);
-      a.download = `${title.toLowerCase().replace(/\s+/g, "_")}.md`;
+      a.download = "yrusika_lecture_notes.md";
       a.click();
+    };
+
+    // Copy Notes
+    document.getElementById("copyNoteIcon").onclick = () => {
+      navigator.clipboard.writeText(editor.innerText).then(() => alert("Notes copied to clipboard!"));
+    };
+
+    // Auto-save
+    editor.addEventListener("input", () => {
+      localStorage.setItem("yrusika_focus_notes", editor.innerHTML);
+    });
+    window.addEventListener("DOMContentLoaded", () => {
+      const saved = localStorage.getItem("yrusika_focus_notes");
+      if (saved) editor.innerHTML = saved;
     });
 
-    // Copy to clipboard
-    copyNotesBtn.addEventListener("click", () => {
-      navigator.clipboard.writeText(textarea.value).then(() => {
-        const originalText = copyNotesBtn.textContent;
-        copyNotesBtn.textContent = "Copied!";
-        setTimeout(() => copyNotesBtn.textContent = originalText, 1500);
-      });
-    });
+    // Theme toggle
+    let dark = true;
+    document.getElementById("themeToggleBtn").onclick = () => {
+      dark = !dark;
+      document.documentElement.style.filter = dark ? "none" : "invert(0.92) hue-rotate(180deg)";
+    };
   </script>
 </body>
 </html>
-
