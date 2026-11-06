@@ -1,0 +1,68 @@
+{
+  "manifest_version": 3,
+  "name": "Yrusika — AI Video Note Taker & Visual Transcriber",
+  "version": "1.0.0",
+  "description": "Open-source AI video note taker. Real-time split screen, quadrant edge-diff scene detection, and live transcription using Gemini and Ollama.",
+  "permissions": [
+    "storage",
+    "activeTab",
+    "scripting"
+  ],
+  "host_permissions": [
+    "*://*.youtube.com/*",
+    "https://generativelanguage.googleapis.com/*",
+    "http://localhost:*/*",
+    "http://127.0.0.1:*/*"
+  ],
+  "icons": {
+    "16": "assets/icons/icon16.png",
+    "32": "assets/icons/icon32.png",
+    "48": "assets/icons/icon48.png",
+    "128": "assets/icons/icon128.png"
+  },
+  "action": {
+    "default_title": "Yrusika — AI Video Note Taker",
+    "default_icon": {
+      "16": "assets/icons/icon16.png",
+      "48": "assets/icons/icon48.png",
+      "128": "assets/icons/icon128.png"
+    }
+  },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*.youtube.com/*",
+        "https://*/*",
+        "http://*/*"
+      ],
+      "all_frames": false,
+      "js": [
+        "vision-detector.js",
+        "ai-client.js",
+        "content.js"
+      ],
+      "css": [
+        "hover.css"
+      ]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "panel.html",
+        "panel.css",
+        "panel.js",
+        "vision-detector.js",
+        "ai-client.js",
+        "assets/*"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
+  ]
+}
