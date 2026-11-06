@@ -1,0 +1,4 @@
+Stop pausing lectures to write notes. Yrusika docks directly into YouTube, captures slide keyframes with one click, and streams timestamped Markdown straight into your local Obsidian vault.
+
+100% free, MIT licensed, and zero telemetry:
+https://github.com/tejuas98/yrusika
