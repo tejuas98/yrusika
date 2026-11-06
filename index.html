@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Yrusika — Open-Source AI Video Note Taker & Study Station</title>
+  <meta name="description" content="Free, open-source video note-taking workstation. Docks alongside YouTube, Physics Wallah, Coursera, or local videos with timestamped notes, slide captures, and Markdown export." />
+  <link rel="icon" type="image/png" href="assets/icons/icon48.png" />
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --card-bg: #111827;
+      --card-border: #1f293d;
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --accent: #3b82f6;
+      --accent-hover: #2563eb;
+      --accent-glow: rgba(59, 130, 246, 0.25);
+      --success: #10b981;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      line-height: 1.5;
+      overflow-x: hidden;
+    }
+
+    /* Navbar */
+    .navbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 2rem;
+      background: rgba(11, 15, 25, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--card-border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: inherit;
+      font-weight: 700;
+      font-size: 1.25rem;
+      letter-spacing: -0.5px;
+    }
+
+    .brand-badge {
+      font-size: 0.7rem;
+      padding: 2px 8px;
+      background: rgba(59, 130, 246, 0.15);
+      color: #60a5fa;
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      border-radius: 9999px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .nav-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: color 0.15s;
+    }
+
+    .nav-link:hover {
+      color: var(--text-main);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0.55rem 1.1rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #ffffff;
+      box-shadow: 0 4px 14px var(--accent-glow);
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: var(--card-bg);
+      color: var(--text-main);
+      border: 1px solid var(--card-border);
+    }
+
+    .btn-secondary:hover {
+      border-color: #374151;
+      background: #1a2234;
+    }
+
+    /* Hero */
+    .hero {
+      text-align: center;
+      padding: 4rem 1.5rem 3rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .hero-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      color: #34d399;
+      border-radius: 9999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero h1 {
+      font-size: 3rem;
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -1px;
+      margin-bottom: 1.25rem;
+      background: linear-gradient(135deg, #ffffff 30%, #93c5fd 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero p {
+      font-size: 1.15rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 2rem;
+    }
+
+    .hero-actions {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    /* Study Station Web App Section */
+    .study-station-section {
+      max-width: 1380px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 5rem;
+    }
+
+    .station-header {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px 14px 0 0;
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .url-input-group {
+      display: flex;
+      gap: 8px;
+      flex: 1 1 500px;
+      max-width: 750px;
+    }
+
+    .url-input {
+      flex: 1;
+      background: #090d16;
+      border: 1px solid #283548;
+      border-radius: 8px;
+      padding: 0.65rem 1rem;
+      color: #fff;
+      font-size: 0.9rem;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .url-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+    }
+
+    .preset-pills {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .preset-btn {
+      background: #1f2937;
+      border: 1px solid #374151;
+      color: #93c5fd;
+      padding: 3px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.75rem;
+      transition: all 0.15s;
+    }
+
+    .preset-btn:hover {
+      background: #2563eb;
+      color: #fff;
+      border-color: #2563eb;
+    }
+
+    /* Split Screen Workstation */
+    .workstation {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border: 1px solid var(--card-border);
+      border-top: none;
+      border-radius: 0 0 14px 14px;
+      background: #0d121f;
+      min-height: 680px;
+      overflow: hidden;
+    }
+
+    /* Video Player Half */
+    .video-pane {
+      background: #000;
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid var(--card-border);
+    }
+
+    .video-viewport {
+      flex: 1;
+      position: relative;
+      background: #05070c;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 380px;
+    }
+
+    .video-viewport iframe,
+    .video-viewport video {
+      width: 100%;
+      height: 100%;
+      min-height: 420px;
+      border: none;
+    }
+
+    .player-controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.75rem 1rem;
+      background: #0d121f;
+      border-top: 1px solid var(--card-border);
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .ctrl-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .ctrl-btn {
+      background: #1e293b;
+      color: #cbd5e1;
+      border: 1px solid #334155;
+      padding: 5px 10px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      font-family: var(--font-mono);
+      transition: all 0.15s;
+    }
+
+    .ctrl-btn:hover {
+      background: #3b82f6;
+      color: #fff;
+      border-color: #3b82f6;
+    }
+
+    .time-indicator {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: #38bdf8;
+      padding: 0 4px;
+    }
+
+    /* Note Editor Half */
+    .editor-pane {
+      background: #0e1422;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .editor-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.75rem 1.25rem;
+      background: #131b2e;
+      border-bottom: 1px solid var(--card-border);
+      gap: 10px;
+    }
+
+    .note-title-input {
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 700;
+      outline: none;
+      width: 100%;
+      max-width: 320px;
+    }
+
+    .note-title-input:focus {
+      border-bottom: 1px solid var(--accent);
+    }
+
+    .vault-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      color: #34d399;
+      font-family: var(--font-mono);
+    }
+
+    .editor-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 0.5rem 1.25rem;
+      background: #090e18;
+      border-bottom: 1px solid var(--card-border);
+      flex-wrap: wrap;
+    }
+
+    .action-btn {
+      background: #172033;
+      border: 1px solid #28354c;
+      color: #e2e8f0;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.15s;
+    }
+
+    .action-btn:hover {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    .action-btn.accent {
+      background: rgba(59, 130, 246, 0.2);
+      border-color: rgba(59, 130, 246, 0.4);
+      color: #60a5fa;
+    }
+
+    .note-textarea {
+      flex: 1;
+      width: 100%;
+      height: 100%;
+      min-height: 400px;
+      background: transparent;
+      border: none;
+      color: #e2e8f0;
+      padding: 1.25rem;
+      font-family: var(--font-mono);
+      font-size: 0.95rem;
+      line-height: 1.7;
+      resize: none;
+      outline: none;
+    }
+
+    .note-textarea::placeholder {
+      color: #4b5563;
+    }
+
+    /* Architecture Flowchart Section */
+    .flowchart-section {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 3rem 1.5rem;
+      text-align: center;
+    }
+
+    .flowchart-section h2 {
+      font-size: 2.2rem;
+      margin-bottom: 0.75rem;
+      letter-spacing: -0.5px;
+    }
+
+    .flowchart-section p {
+      color: var(--text-muted);
+      margin-bottom: 2rem;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .flowchart-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+      display: inline-block;
+      max-width: 100%;
+    }
+
+    .flowchart-card img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--card-border);
+      padding: 2.5rem 1.5rem;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    footer a {
+      color: #60a5fa;
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .workstation {
+        grid-template-columns: 1fr;
+      }
+      .video-pane {
+        border-right: none;
+        border-bottom: 1px solid var(--card-border);
+      }
+      .hero h1 {
+        font-size: 2.2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navbar -->
+  <nav class="navbar">
+    <a href="#" class="brand">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="5 3 19 12 5 21 5 3"></polygon>
+      </svg>
+      <span>Yrusika</span>
+      <span class="brand-badge">Open Source</span>
+    </a>
+    <div class="nav-links">
+      <a href="#study-station" class="nav-link">Web Study Station</a>
+      <a href="#architecture" class="nav-link">Architecture</a>
+      <a href="https://github.com/tejuas98/yrusika" target="_blank" class="nav-link">GitHub</a>
+      <a href="https://github.com/tejuas98/yrusika/archive/refs/heads/main.zip" class="btn btn-primary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="7 10 12 15 17 10"></polyline>
+          <line x1="12" y1="15" x2="12" y2="3"></line>
+        </svg>
+        <span>Download Extension</span>
+      </a>
+    </div>
+  </nav>
+
+  <!-- Hero Header -->
+  <header class="hero">
+    <div class="hero-pill">
+      <span>100% Free Forever &middot; Zero Paywalls &middot; Local First</span>
+    </div>
+    <h1>Study Any Video with AI-Powered Visual Notes</h1>
+    <p>
+      An open-source, subscription-free lecture workstation for YouTube, Physics Wallah, Coursera, or offline video files. Dock alongside your lectures with burned timestamps, slide captures, and instant Markdown export.
+    </p>
+    <div class="hero-actions">
+      <a href="#study-station" class="btn btn-primary" style="padding: 0.75rem 1.5rem; font-size: 1rem;">
+        Launch Web Study Station
+      </a>
+      <a href="https://github.com/tejuas98/yrusika" target="_blank" class="btn btn-secondary" style="padding: 0.75rem 1.5rem; font-size: 1rem;">
+        View on GitHub
+      </a>
+    </div>
+  </header>
+
+  <!-- Interactive Study Station Web App -->
+  <section id="study-station" class="study-station-section">
+    <!-- URL / Source Input Bar -->
+    <div class="station-header">
+      <div class="url-input-group">
+        <input 
+          type="text" 
+          id="videoUrlInput" 
+          class="url-input" 
+          placeholder="Paste YouTube video link (e.g., https://www.youtube.com/watch?v=tgGNwG_UxFo)..."
+          value="https://www.youtube.com/watch?v=tgGNwG_UxFo"
+        />
+        <button id="loadVideoBtn" class="btn btn-primary">Load Lecture</button>
+      </div>
+      
+      <div class="preset-pills">
+        <span>Try sample:</span>
+        <button class="preset-btn" onclick="loadPreset('https://www.youtube.com/watch?v=tgGNwG_UxFo', 'Tour of Go Tutorial')">Go Backend</button>
+        <button class="preset-btn" onclick="loadPreset('https://www.youtube.com/watch?v=aircAruvnKk', '3Blue1Brown Neural Networks')">Math & AI</button>
+        <label for="localFileInput" class="preset-btn" style="background:#047857; color:#fff; border-color:#059669;">
+          Open Local MP4
+        </label>
+        <input type="file" id="localFileInput" accept="video/mp4,video/webm,video/ogg" style="display:none;" />
+      </div>
+    </div>
+
+    <!-- Side-by-Side Study Dock -->
+    <div class="workstation">
+      
+      <!-- Video Half -->
+      <div class="video-pane">
+        <div class="video-viewport" id="videoViewport">
+          <iframe 
+            id="youtubePlayer"
+            src="https://www.youtube.com/embed/tgGNwG_UxFo?enablejsapi=1" 
+            title="Video Player"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+            allowfullscreen>
+          </iframe>
+          <video id="localVideoPlayer" controls style="display:none;"></video>
+        </div>
+
+        <div class="player-controls">
+          <div class="ctrl-group">
+            <button class="ctrl-btn" id="seekBackBtn">-10s</button>
+            <button class="ctrl-btn" id="playPauseBtn">Play / Pause</button>
+            <button class="ctrl-btn" id="seekForwardBtn">+10s</button>
+            <span class="time-indicator" id="playbackTime">00:00</span>
+          </div>
+
+          <div class="ctrl-group">
+            <span style="font-size:0.75rem; color:#94a3b8;">Speed:</span>
+            <button class="ctrl-btn" onclick="setSpeed(0.8)">0.8x</button>
+            <button class="ctrl-btn" onclick="setSpeed(1.0)">1.0x</button>
+            <button class="ctrl-btn" onclick="setSpeed(1.5)">1.5x</button>
+            <button class="ctrl-btn" onclick="setSpeed(2.0)">2.0x</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Notes Dock Half -->
+      <div class="editor-pane">
+        <div class="editor-topbar">
+          <input type="text" id="noteTitle" class="note-title-input" value="Go Basics & Architecture Notes" />
+          <div class="vault-indicator">
+            <span style="display:inline-block; width:8px; height:8px; background:#10b981; border-radius:50%;"></span>
+            <span>Local Auto-Save: Active</span>
+          </div>
+        </div>
+
+        <div class="editor-toolbar">
+          <button class="action-btn accent" id="insertTimestampBtn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            <span>+ Timestamp</span>
+          </button>
+          <button class="action-btn" onclick="insertMarkdown('# ')">H1</button>
+          <button class="action-btn" onclick="insertMarkdown('## ')">H2</button>
+          <button class="action-btn" onclick="insertMarkdown('- [ ] ')">Task</button>
+          <button class="action-btn" onclick="insertMarkdown('```go\n// code here\n```\n')">Code</button>
+          <button class="action-btn" onclick="insertMarkdown('$$\nE = mc^2\n$$\n')">Math</button>
+          
+          <div style="margin-left: auto; display:flex; gap:6px;">
+            <button class="action-btn" id="exportMdBtn">Export .md</button>
+            <button class="action-btn" id="copyNotesBtn">Copy</button>
+          </div>
+        </div>
+
+        <textarea 
+          id="noteTextarea" 
+          class="note-textarea" 
+          placeholder="Type your notes here, press '+ Timestamp' to pin key moments, or write Markdown..."
+        ># Tour of Go — System Architecture & Fundamentals
+
+- **Source Lecture**: Go Basics Walkthrough
+- **Mode**: Desktop Web Study Station
+
+## [01:40] Core Topics & Scope
+- Walkthrough of Go fundamental types, memory allocation, and concurrency routines.
+- Prerequisites: Basic knowledge of command line and programming logic.
+
+## [03:15] Variables & Type Inference
+```go
+package main
+
+import "fmt"
+
+func main() {
+    message := "Welcome to Yrusika"
+    fmt.Println(message)
+}
+```
+
+## [08:30] Key Insights
+- Go routines are lightweight threads managed by the Go runtime rather than kernel threads.
+- Channels provide type-safe synchronization without explicit mutex locking.
+</textarea>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Flowchart Architecture Section -->
+  <section id="architecture" class="flowchart-section">
+    <h2>Yrusika Ecosystem Architecture</h2>
+    <p>
+      Seamless dual-workflow: run the desktop extension locally inside YouTube and PW, or use the web study app on any device with zero setup.
+    </p>
+    <div class="flowchart-card">
+      <img src="assets/flowchart.png" alt="Yrusika Ecosystem Flowchart" />
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>
+      Yrusika is an open-source project released under the <a href="LICENSE">MIT License</a>.
+      &middot; 
+      <a href="https://github.com/tejuas98/yrusika" target="_blank">GitHub Repository</a>
+      &middot;
+      <a href="https://github.com/tejuas98/yrusika/issues" target="_blank">Issues & Feedback</a>
+    </p>
+  </footer>
+
+  <script>
+    // State
+    let currentSeconds = 100;
+    let isPlaying = false;
+    let timer = null;
+
+    // Elements
+    const urlInput = document.getElementById("videoUrlInput");
+    const loadBtn = document.getElementById("loadVideoBtn");
+    const ytPlayer = document.getElementById("youtubePlayer");
+    const localVideo = document.getElementById("localVideoPlayer");
+    const localFileInput = document.getElementById("localFileInput");
+    const textarea = document.getElementById("noteTextarea");
+    const timeDisplay = document.getElementById("playbackTime");
+    const timestampBtn = document.getElementById("insertTimestampBtn");
+    const exportMdBtn = document.getElementById("exportMdBtn");
+    const copyNotesBtn = document.getElementById("copyNotesBtn");
+
+    // Format seconds to mm:ss
+    function formatTime(sec) {
+      const m = Math.floor(sec / 60);
+      const s = Math.floor(sec % 60);
+      return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    }
+
+    // Parse YouTube URL to Video ID
+    function extractYouTubeId(url) {
+      const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
+      return match ? match[1] : null;
+    }
+
+    // Load Video
+    function loadVideo(url) {
+      const vid = extractYouTubeId(url);
+      if (vid) {
+        localVideo.style.display = "none";
+        localVideo.pause();
+        ytPlayer.style.display = "block";
+        ytPlayer.src = `https://www.youtube.com/embed/${vid}?enablejsapi=1&autoplay=1`;
+        currentSeconds = 0;
+        timeDisplay.textContent = "00:00";
+      } else {
+        alert("Please enter a valid YouTube video link.");
+      }
+    }
+
+    loadBtn.addEventListener("click", () => {
+      loadVideo(urlInput.value.trim());
+    });
+
+    urlInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") loadVideo(urlInput.value.trim());
+    });
+
+    // Preset loading
+    window.loadPreset = function(url, title) {
+      urlInput.value = url;
+      document.getElementById("noteTitle").value = title;
+      loadVideo(url);
+    };
+
+    // Local MP4 file loading
+    localFileInput.addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        ytPlayer.style.display = "none";
+        localVideo.style.display = "block";
+        localVideo.src = URL.createObjectURL(file);
+        localVideo.play();
+        document.getElementById("noteTitle").value = file.name.replace(/\.[^/.]+$/, "");
+      }
+    });
+
+    // Local Video time updates
+    localVideo.addEventListener("timeupdate", () => {
+      currentSeconds = localVideo.currentTime;
+      timeDisplay.textContent = formatTime(currentSeconds);
+    });
+
+    // Speed Control
+    window.setSpeed = function(rate) {
+      if (localVideo.style.display !== "none") {
+        localVideo.playbackRate = rate;
+      } else {
+        // Send postMessage to YouTube IFrame API
+        ytPlayer.contentWindow.postMessage(JSON.stringify({
+          event: "command",
+          func: "setPlaybackRate",
+          args: [rate]
+        }), "*");
+      }
+    };
+
+    // Seek buttons
+    document.getElementById("seekBackBtn").addEventListener("click", () => {
+      if (localVideo.style.display !== "none") {
+        localVideo.currentTime = Math.max(0, localVideo.currentTime - 10);
+      } else {
+        ytPlayer.contentWindow.postMessage(JSON.stringify({
+          event: "command",
+          func: "seekTo",
+          args: [Math.max(0, currentSeconds - 10), true]
+        }), "*");
+        currentSeconds = Math.max(0, currentSeconds - 10);
+        timeDisplay.textContent = formatTime(currentSeconds);
+      }
+    });
+
+    document.getElementById("seekForwardBtn").addEventListener("click", () => {
+      if (localVideo.style.display !== "none") {
+        localVideo.currentTime += 10;
+      } else {
+        currentSeconds += 10;
+        ytPlayer.contentWindow.postMessage(JSON.stringify({
+          event: "command",
+          func: "seekTo",
+          args: [currentSeconds, true]
+        }), "*");
+        timeDisplay.textContent = formatTime(currentSeconds);
+      }
+    });
+
+    document.getElementById("playPauseBtn").addEventListener("click", () => {
+      if (localVideo.style.display !== "none") {
+        if (localVideo.paused) localVideo.play(); else localVideo.pause();
+      } else {
+        isPlaying = !isPlaying;
+        const func = isPlaying ? "playVideo" : "pauseVideo";
+        ytPlayer.contentWindow.postMessage(JSON.stringify({ event: "command", func: func, args: [] }), "*");
+      }
+    });
+
+    // Insert Timestamp Button
+    timestampBtn.addEventListener("click", () => {
+      const stamp = `\n## [${formatTime(currentSeconds)}] `;
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      const val = textarea.value;
+      textarea.value = val.substring(0, start) + stamp + val.substring(end);
+      textarea.selectionStart = textarea.selectionEnd = start + stamp.length;
+      textarea.focus();
+      saveNotes();
+    });
+
+    // Formatting insertion
+    window.insertMarkdown = function(syntax) {
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      const val = textarea.value;
+      textarea.value = val.substring(0, start) + syntax + val.substring(end);
+      textarea.selectionStart = textarea.selectionEnd = start + syntax.length;
+      textarea.focus();
+      saveNotes();
+    };
+
+    // Auto-Save in LocalStorage
+    function saveNotes() {
+      localStorage.setItem("yrusika_web_notes", textarea.value);
+      localStorage.setItem("yrusika_web_title", document.getElementById("noteTitle").value);
+    }
+    textarea.addEventListener("input", saveNotes);
+    document.getElementById("noteTitle").addEventListener("input", saveNotes);
+
+    // Restore on load
+    window.addEventListener("DOMContentLoaded", () => {
+      const saved = localStorage.getItem("yrusika_web_notes");
+      const savedTitle = localStorage.getItem("yrusika_web_title");
+      if (saved) textarea.value = saved;
+      if (savedTitle) document.getElementById("noteTitle").value = savedTitle;
+    });
+
+    // Export .md
+    exportMdBtn.addEventListener("click", () => {
+      const title = document.getElementById("noteTitle").value.trim() || "yrusika_notes";
+      const blob = new Blob([textarea.value], { type: "text/markdown;charset=utf-8" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = `${title.toLowerCase().replace(/\s+/g, "_")}.md`;
+      a.click();
+    });
+
+    // Copy to clipboard
+    copyNotesBtn.addEventListener("click", () => {
+      navigator.clipboard.writeText(textarea.value).then(() => {
+        const originalText = copyNotesBtn.textContent;
+        copyNotesBtn.textContent = "Copied!";
+        setTimeout(() => copyNotesBtn.textContent = originalText, 1500);
+      });
+    });
+  </script>
+</body>
+</html>
