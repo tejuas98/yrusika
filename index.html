@@ -21,6 +21,7 @@
       --accent: #3b82f6;
       --accent-hover: #2563eb;
       --green-dot: #10b981;
+      --yt-red: #ff0000;
       --font-ui: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
     }
@@ -41,12 +42,13 @@
       user-select: none;
     }
 
-    /* Full App Layout */
+    /* Main Container */
     .app-container {
       display: flex;
       width: 100vw;
       height: 100vh;
       background: var(--bg-video);
+      overflow: hidden;
     }
 
     /* Left Side: Video Section */
@@ -60,7 +62,7 @@
       position: relative;
     }
 
-    /* Top Floating Controller Toolbar Area */
+    /* Top Floating Toolbar (2 pill boxes) */
     .floating-bar-wrapper {
       position: absolute;
       top: 14px;
@@ -69,6 +71,16 @@
       display: flex;
       align-items: center;
       gap: 10px;
+      pointer-events: auto;
+      transition: opacity 0.2s;
+    }
+
+    .floating-bar-wrapper.hidden-bar {
+      opacity: 0.15;
+    }
+
+    .floating-bar-wrapper.hidden-bar:hover {
+      opacity: 1;
     }
 
     .floating-box {
@@ -123,41 +135,173 @@
     .video-viewport {
       flex: 1;
       width: 100%;
-      height: 100%;
+      height: calc(100vh - 42px);
+      background: #000;
+      position: relative;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: #000;
-      position: relative;
+      overflow: hidden;
     }
 
+    /* Clean Video Elements */
     .video-viewport iframe,
     .video-viewport video {
       width: 100%;
       height: 100%;
-      max-height: calc(100vh - 42px);
       border: none;
       outline: none;
+      object-fit: contain;
+      background: #000;
     }
 
     /* Subtitle Caption Overlay */
     .video-caption-overlay {
       position: absolute;
-      bottom: 22px;
+      bottom: 60px;
       left: 50%;
       transform: translateX(-50%);
-      background: rgba(0, 0, 0, 0.9);
+      background: rgba(0, 0, 0, 0.88);
       color: #ffffff;
-      padding: 5px 14px;
-      border-radius: 5px;
-      font-size: 0.92rem;
+      padding: 6px 16px;
+      border-radius: 6px;
+      font-size: 0.95rem;
       font-weight: 500;
-      letter-spacing: 0.1px;
+      letter-spacing: 0.2px;
       pointer-events: none;
       z-index: 30;
       text-align: center;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.7);
       transition: opacity 0.3s;
+      max-width: 80%;
+    }
+
+    /* Custom Video Controls Bar at bottom of Video */
+    .custom-player-bar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 48px;
+      background: linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.6) 70%, transparent 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 0 16px 8px 16px;
+      z-index: 40;
+      opacity: 1;
+      transition: opacity 0.3s;
+    }
+
+    /* Progress Scrubber */
+    .progress-bar-container {
+      width: 100%;
+      height: 14px;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .progress-bar-track {
+      width: 100%;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.25);
+      border-radius: 2px;
+      position: relative;
+      transition: height 0.15s;
+    }
+
+    .progress-bar-container:hover .progress-bar-track {
+      height: 6px;
+    }
+
+    .progress-bar-fill {
+      width: 28%;
+      height: 100%;
+      background: var(--yt-red);
+      border-radius: 2px;
+      position: relative;
+    }
+
+    .progress-bar-handle {
+      position: absolute;
+      right: -6px;
+      top: -4px;
+      width: 14px;
+      height: 14px;
+      background: var(--yt-red);
+      border-radius: 50%;
+      transform: scale(0);
+      transition: transform 0.15s;
+      box-shadow: 0 0 6px rgba(0,0,0,0.6);
+    }
+
+    .progress-bar-container:hover .progress-bar-handle {
+      transform: scale(1);
+    }
+
+    /* Controls Row */
+    .player-controls-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 34px;
+      margin-top: 2px;
+    }
+
+    .p-left-group, .p-right-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .p-btn {
+      background: transparent;
+      border: none;
+      color: #fff;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px;
+      border-radius: 4px;
+      transition: opacity 0.15s;
+    }
+
+    .p-btn:hover {
+      opacity: 0.85;
+    }
+
+    .p-time-display {
+      font-size: 0.82rem;
+      color: #e4e4e7;
+      font-family: var(--font-ui);
+      letter-spacing: 0.3px;
+      margin-left: 4px;
+    }
+
+    .vol-slider-wrap {
+      display: inline-flex;
+      align-items: center;
+      width: 60px;
+      height: 14px;
+      cursor: pointer;
+    }
+
+    .vol-slider-track {
+      width: 100%;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 2px;
+      position: relative;
+    }
+
+    .vol-slider-fill {
+      width: 80%;
+      height: 100%;
+      background: #fff;
+      border-radius: 2px;
     }
 
     /* Video Footer Learning Streak */
@@ -168,7 +312,7 @@
       justify-content: space-between;
       padding: 0 1.5rem;
       background: #000;
-      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
       font-size: 0.82rem;
       color: var(--text-muted);
       font-family: var(--font-mono);
@@ -313,6 +457,12 @@
       font-size: 0.8rem;
       font-weight: 500;
       cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .vault-badge:hover {
+      background: #1e1e26;
+      border-color: #3f3f4e;
     }
 
     .vault-dot {
@@ -327,6 +477,7 @@
       display: flex;
       align-items: center;
       gap: 2px;
+      position: relative;
     }
 
     .v-action-btn {
@@ -345,6 +496,45 @@
     .v-action-btn:hover {
       color: #fff;
       background: rgba(255, 255, 255, 0.06);
+    }
+
+    /* Export Dropdown Popover */
+    .export-popover {
+      display: none;
+      position: absolute;
+      top: 32px;
+      right: 0;
+      width: 180px;
+      background: #18181f;
+      border: 1px solid #2a2a38;
+      border-radius: 8px;
+      padding: 6px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.7);
+      z-index: 100;
+    }
+
+    .export-popover.active {
+      display: block;
+    }
+
+    .export-opt {
+      width: 100%;
+      background: transparent;
+      border: none;
+      color: #e4e4e7;
+      padding: 7px 10px;
+      border-radius: 5px;
+      font-size: 0.8rem;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .export-opt:hover {
+      background: #272734;
+      color: #fff;
     }
 
     /* Note Editor Body */
@@ -383,7 +573,7 @@
       transition: all 0.15s;
     }
 
-    .note-side-btn:hover {
+    .note-side-btn.active, .note-side-btn:hover {
       background: rgba(255, 255, 255, 0.1);
       color: #fff;
     }
@@ -401,6 +591,12 @@
       margin-bottom: 0.9rem;
       position: relative;
       max-width: 92%;
+      cursor: pointer;
+      transition: border-color 0.2s;
+    }
+
+    .slide-card:hover {
+      border-color: #3b82f6;
     }
 
     .slide-card img {
@@ -423,10 +619,12 @@
       margin-bottom: 0.8rem;
       cursor: pointer;
       width: fit-content;
+      transition: opacity 0.15s;
     }
 
     .timestamp-badge-row:hover {
       text-decoration: underline;
+      opacity: 0.85;
     }
 
     .note-text-block {
@@ -434,6 +632,7 @@
       color: #e4e4e7;
       line-height: 1.7;
       outline: none;
+      min-height: 100px;
     }
 
     .note-text-block p {
@@ -478,6 +677,96 @@
       object-fit: contain;
     }
 
+    /* AI Assistant Chat Popover */
+    .ai-chat-popover {
+      display: none;
+      position: absolute;
+      bottom: 105px;
+      right: 18px;
+      width: 340px;
+      background: #14141a;
+      border: 1px solid #282834;
+      border-radius: 12px;
+      box-shadow: 0 12px 36px rgba(0,0,0,0.8);
+      z-index: 150;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .ai-chat-popover.active {
+      display: flex;
+    }
+
+    .ai-chat-header {
+      padding: 10px 14px;
+      background: #1a1a22;
+      border-bottom: 1px solid #282834;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .ai-chat-body {
+      padding: 12px;
+      font-size: 0.82rem;
+      color: #d4d4d8;
+      max-height: 220px;
+      overflow-y: auto;
+    }
+
+    .ai-chat-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+
+    .ai-chip {
+      background: #22222c;
+      border: 1px solid #2f2f3d;
+      color: #93c5fd;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      cursor: pointer;
+    }
+
+    .ai-chip:hover {
+      background: #2a2a38;
+      color: #fff;
+    }
+
+    .ai-chat-input-row {
+      padding: 8px 12px;
+      border-top: 1px solid #282834;
+      display: flex;
+      gap: 6px;
+    }
+
+    .ai-input {
+      flex: 1;
+      background: #09090c;
+      border: 1px solid #272732;
+      border-radius: 6px;
+      padding: 5px 8px;
+      color: #fff;
+      font-size: 0.8rem;
+      outline: none;
+    }
+
+    .ai-send-btn {
+      background: #3b82f6;
+      border: none;
+      color: #fff;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      cursor: pointer;
+      font-weight: 500;
+    }
+
     /* Scrub Bar above footer */
     .scrub-bar {
       height: 38px;
@@ -516,7 +805,7 @@
     }
 
     .vol-fill {
-      width: 75%;
+      width: 80%;
       height: 100%;
       background: #3b82f6;
       border-radius: 2px;
@@ -598,7 +887,7 @@
       color: #fff;
     }
 
-    /* Modal for URL Changing */
+    /* Modals */
     .modal-overlay {
       display: none;
       position: fixed;
@@ -677,19 +966,29 @@
       color: #e4e4e7;
     }
 
-    /* Responsive for mobile portrait */
-    @media (max-width: 860px) {
-      .app-container {
-        flex-direction: column;
-      }
-      .video-section {
-        height: 42vh;
-        min-height: 240px;
-      }
-      .dock-section {
-        width: 100%;
-        height: 58vh;
-      }
+    /* Toast Notification */
+    .toast-pill {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-100px);
+      background: #1e1e28;
+      border: 1px solid #3b82f6;
+      color: #fff;
+      padding: 8px 18px;
+      border-radius: 30px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.6);
+      z-index: 2000;
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .toast-pill.show {
+      transform: translateX(-50%) translateY(0);
     }
   </style>
 </head>
@@ -697,15 +996,15 @@
 
   <div class="app-container">
 
-    <!-- Left Half: Video Player -->
+    <!-- Left Half: Clean Video Player Viewport -->
     <div class="video-section">
 
       <!-- Top Floating Controller Toolbar -->
-      <div class="floating-bar-wrapper">
+      <div class="floating-bar-wrapper" id="floatingToolbar">
         <!-- Box 1: Close & Hide -->
         <div class="floating-box">
-          <button class="f-btn" title="Exit Focus Mode" onclick="alert('Focus Mode Active')">&times;</button>
-          <button class="f-btn" id="hideBtn" title="Hide (V)">
+          <button class="f-btn" id="topCloseBtn" title="Exit Focus Mode">&times;</button>
+          <button class="f-btn" id="hideBtn" title="Hide Toolbar (V)">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
           </button>
         </div>
@@ -744,18 +1043,58 @@
       </div>
 
       <!-- Video Player Viewport -->
-      <div class="video-viewport">
-        <iframe 
-          id="ytIframe"
-          src="https://www.youtube.com/embed/tgGNwG_UxFo?enablejsapi=1&autoplay=1&rel=0" 
-          title="Video Player"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-          allowfullscreen>
-        </iframe>
-        <video id="htmlVideo" controls style="display:none; width:100%; height:100%;"></video>
+      <div class="video-viewport" id="videoViewport">
+        <!-- Native HTML5 Video Element (Clean, Full Screen, Frame Capture Ready) -->
+        <video id="mainVideo" playsinline preload="auto"></video>
+        
+        <!-- YouTube IFrame API Container (controls=0, no clutter) -->
+        <div id="ytPlayerContainer" style="width:100%; height:100%;"></div>
 
-        <!-- Dynamic Caption Box -->
+        <!-- Subtitle Overlay -->
         <div class="video-caption-overlay" id="captionOverlay">series of steps that we are going to follow</div>
+
+        <!-- Custom Video Controls Bar -->
+        <div class="custom-player-bar" id="customPlayerBar">
+          <!-- Scrubber Timeline Track -->
+          <div class="progress-bar-container" id="progressBarContainer">
+            <div class="progress-bar-track">
+              <div class="progress-bar-fill" id="progressBarFill">
+                <div class="progress-bar-handle"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Controls Button Row -->
+          <div class="player-controls-row">
+            <div class="p-left-group">
+              <button class="p-btn" id="pPlayPauseBtn" title="Play / Pause (k)">
+                <svg id="pPlayIcon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              </button>
+              <button class="p-btn" id="pNextBtn" title="Skip +10s">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19" stroke="currentColor" stroke-width="2"/></svg>
+              </button>
+              <button class="p-btn" id="pVolBtn" title="Volume">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+              </button>
+              <div class="vol-slider-wrap" id="volSliderWrap">
+                <div class="vol-slider-track">
+                  <div class="vol-slider-fill" id="volSliderFill"></div>
+                </div>
+              </div>
+              <div class="p-time-display" id="pTimeDisplay">01:43 / 05:54:50</div>
+            </div>
+
+            <div class="p-right-group">
+              <button class="p-btn" id="pCcBtn" title="Subtitles (c)" style="font-weight:700; font-size:0.75rem; border:1px solid rgba(255,255,255,0.4); padding:1px 5px; border-radius:3px;">CC</button>
+              <button class="p-btn" id="pSettingsBtn" title="Playback Settings">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+              </button>
+              <button class="p-btn" id="pFullscreenBtn" title="Fullscreen (f)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- Video Footer Learning Streak -->
@@ -763,7 +1102,7 @@
         <div>
           <strong>14m</strong> today &middot; <strong>1</strong> day this week
         </div>
-        <button class="url-change-pill" id="openUrlModalBtn">
+        <button class="url-change-pill" id="openUrlModalBtn" title="Change video or upload local file">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
           <span>Change Video / URL</span>
         </button>
@@ -772,7 +1111,7 @@
     </div>
 
     <!-- Right Half: Yrusika Note-Taking Dock -->
-    <div class="dock-section">
+    <div class="dock-section" id="dockSection">
 
       <!-- Dock Header -->
       <div class="dock-header">
@@ -782,16 +1121,16 @@
           <span class="chevron">&rsaquo;</span>
         </div>
         <div class="dock-header-actions">
-          <button class="icon-btn" id="themeToggleBtn" title="Theme">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          <button class="icon-btn" id="themeToggleBtn" title="Toggle Dark/Light Mode">
+            <svg id="moonIcon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
           </button>
-          <button class="icon-btn" id="closeDockBtn" title="Close Dock">&times;</button>
+          <button class="icon-btn" id="closeDockBtn" title="Collapse Dock">&times;</button>
         </div>
       </div>
 
       <!-- Exit Video Mode Pill -->
       <div class="exit-mode-row">
-        <button class="exit-video-btn" onclick="alert('In Focus Mode')">
+        <button class="exit-video-btn" id="exitVideoModeBtn">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
           Exit Video Mode
         </button>
@@ -799,19 +1138,35 @@
 
       <!-- Vault Row -->
       <div class="vault-row">
-        <div class="vault-badge" id="vaultPill">
-          <span class="vault-dot"></span>
-          <span>Vault: notes</span>
+        <div class="vault-badge" id="vaultBtn" title="Connect local Obsidian Vault folder">
+          <span class="vault-dot" id="vaultDot"></span>
+          <span id="vaultLabel">Vault: notes</span>
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
         </div>
 
         <div class="vault-actions">
-          <button class="v-action-btn" title="Open Link" id="openLinkIcon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></button>
+          <button class="v-action-btn" title="Change Video Link" id="openLinkIcon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></button>
           <button class="v-action-btn" title="New Note" id="newNoteIcon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg></button>
-          <button class="v-action-btn" title="Copy Notes" id="copyNoteIcon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button>
-          <button class="v-action-btn" title="History" id="historyIcon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 14 14"/></svg></button>
-          <button class="v-action-btn" title="Export Markdown" id="exportIcon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></button>
+          <button class="v-action-btn" title="Copy Notes to Clipboard" id="copyNoteIcon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button>
+          <button class="v-action-btn" title="Note History" id="historyIcon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 14 14"/></svg></button>
+          <button class="v-action-btn" title="Export Note" id="exportIcon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></button>
           <button class="v-action-btn" title="Settings" id="settingsIcon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
+
+          <!-- Export Dropdown Popover -->
+          <div class="export-popover" id="exportPopover">
+            <button class="export-opt" id="exportMdBtn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              <span>Export as Markdown</span>
+            </button>
+            <button class="export-opt" id="exportTxtBtn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>
+              <span>Export as Plain Text</span>
+            </button>
+            <button class="export-opt" id="exportCopyDropBtn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              <span>Copy to Clipboard</span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -820,63 +1175,98 @@
         
         <!-- Right Margin Floating Icon Tab -->
         <div class="note-side-toolbar">
-          <button class="note-side-btn" title="Document Notes">
+          <button class="note-side-btn active" id="tabDocBtn" title="Document Notes">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
           </button>
-          <button class="note-side-btn" title="Audio Transcript">
+          <button class="note-side-btn" id="tabAudioBtn" title="Audio Transcript">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 10v4M6 6v12M10 3v18M14 8v8M18 5v14M22 10v4"/></svg>
           </button>
         </div>
 
-        <!-- Video Slide Snapshot Card -->
-        <div class="slide-card">
-          <img id="keyframeImg" src="assets/slide-sample.png" onerror="this.src='https://img.youtube.com/vi/tgGNwG_UxFo/hqdefault.jpg'" alt="Slide Keyframe" />
+        <!-- Notes Container -->
+        <div id="notesContainerArea">
+          <!-- Slide Snapshot Card -->
+          <div class="slide-card" id="mainSlideCard" title="Click to jump to 00:01:58">
+            <img id="keyframeImg" src="assets/slide-sample.png" onerror="this.src='https://img.youtube.com/vi/tgGNwG_UxFo/hqdefault.jpg'" alt="Slide Keyframe" />
+          </div>
+
+          <!-- Clickable Timestamp Link Badge -->
+          <div class="timestamp-badge-row" id="firstTimestampBadge" data-seek="118">
+            <span>&#9654;</span>
+            <span id="firstTimestampText">00:01:58</span>
+          </div>
+
+          <!-- Editable Note Points -->
+          <div class="note-text-block" id="editableNoteContent" contenteditable="true" spellcheck="false">
+            <p><span class="bullet-dot">&bull;</span> <span>A resource used to guide the learning process</span></p>
+            <p><span class="bullet-dot">&bull;</span> <span>Features an interactive playground to run code in a sandbox</span></p>
+          </div>
         </div>
 
-        <!-- Timestamp Link Badge -->
-        <div class="timestamp-badge-row" onclick="seekToSeconds(118)">
-          <span>&#9654;</span>
-          <span>00:01:58</span>
-        </div>
-
-        <!-- Editable Note Points -->
-        <div class="note-text-block" id="editableNoteContent" contenteditable="true" spellcheck="false">
-          <p><span class="bullet-dot">&bull;</span> <span>A resource used to guide the learning process</span></p>
-          <p><span class="bullet-dot">&bull;</span> <span>Features an interactive playground to run code in a sandbox</span></p>
+        <!-- Transcript Container (Toggled via tab) -->
+        <div id="transcriptContainerArea" style="display:none; font-size:0.85rem; line-height:1.7;">
+          <div style="color:#71717a; margin-bottom:10px; font-weight:600;">LIVE TRANSCRIPT (CLICK ANY LINE TO JUMP)</div>
+          <p class="transcript-line" data-seek="20" style="cursor:pointer; margin-bottom:8px;"><span style="color:#38bdf8; font-family:monospace;">[00:00:20]</span> Welcome to this complete Go programming walkthrough.</p>
+          <p class="transcript-line" data-seek="65" style="cursor:pointer; margin-bottom:8px;"><span style="color:#38bdf8; font-family:monospace;">[00:01:05]</span> We cover variables, pointers, structs, interfaces, and concurrency.</p>
+          <p class="transcript-line" data-seek="118" style="cursor:pointer; margin-bottom:8px;"><span style="color:#38bdf8; font-family:monospace;">[00:01:58]</span> series of steps that we are going to follow in this course.</p>
+          <p class="transcript-line" data-seek="180" style="cursor:pointer; margin-bottom:8px;"><span style="color:#38bdf8; font-family:monospace;">[00:03:00]</span> Getting started with Go environment and your first module.</p>
         </div>
 
       </div>
 
       <!-- Mascot Button (Bottom Right) -->
-      <div class="mascot-button" title="Yrusika AI Assistant">
+      <div class="mascot-button" id="mascotBtn" title="Ask Yrusika AI Assistant">
         <img src="assets/icons/icon48.png" alt="Mascot" />
+      </div>
+
+      <!-- AI Chat Popover -->
+      <div class="ai-chat-popover" id="aiChatPopover">
+        <div class="ai-chat-header">
+          <span>Yrusika AI Assistant</span>
+          <button class="icon-btn" id="closeAiChatBtn">&times;</button>
+        </div>
+        <div class="ai-chat-body" id="aiChatBody">
+          <p style="margin-bottom:8px; font-weight:500;">Quick Actions:</p>
+          <div class="ai-chat-chips">
+            <button class="ai-chip" id="chipSummarize">Summarize Lecture</button>
+            <button class="ai-chip" id="chipQuiz">Generate Quiz</button>
+            <button class="ai-chip" id="chipExplain">Explain Code</button>
+          </div>
+          <div id="aiChatLog">
+            <p style="color:#a1a1aa; font-style:italic;">Ask anything about the video or the captured code frames.</p>
+          </div>
+        </div>
+        <div class="ai-chat-input-row">
+          <input type="text" id="aiInput" class="ai-input" placeholder="Ask AI about video..." />
+          <button class="ai-send-btn" id="aiSendBtn">Ask</button>
+        </div>
       </div>
 
       <!-- Scrub Bar -->
       <div class="scrub-bar">
-        <button class="scrub-speed" id="scrubSpeedBtn">1x</button>
+        <button class="scrub-speed" id="scrubSpeedBtn" title="Cycle Playback Speed">1x</button>
         <div class="scrub-controls">
           <button class="icon-btn" id="scrubUndo" title="Undo"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg></button>
-          <button class="icon-btn" id="scrubPlayPause" title="Play / Pause"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></button>
+          <button class="icon-btn" id="scrubPlayPause" title="Play / Pause"><svg id="scrubPlayIcon" width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></button>
           <button class="icon-btn" id="scrubRedo" title="Redo"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 7v6h-6"/><path d="M3 17a9 9 0 0 1 9-9 9 9 0 0 1 6 2.3l3 2.7"/></svg></button>
-          <button class="icon-btn" title="Volume"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></button>
-          <div class="vol-track"><div class="vol-fill"></div></div>
-          <button class="icon-btn" title="Info"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></button>
+          <button class="icon-btn" id="scrubMuteToggle" title="Volume Mute"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></button>
+          <div class="vol-track" id="scrubVolTrack"><div class="vol-fill" id="scrubVolFill"></div></div>
+          <button class="icon-btn" id="scrubInfoBtn" title="Video Information"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></button>
         </div>
       </div>
 
       <!-- Dock Footer Action Bar -->
       <div class="dock-footer">
         <div class="dock-footer-left">
-          <button class="footer-action-btn" title="Fullscreen" onclick="document.documentElement.requestFullscreen()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg></button>
-          <button class="footer-action-btn" title="Video Mode Settings" id="footerSettingsBtn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
-          <button class="footer-action-btn" title="Insert Timestamp" id="footerClockBtn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></button>
-          <button class="footer-action-btn camera-active" title="Capture Frame" id="footerCameraBtn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></button>
+          <button class="footer-action-btn" title="Toggle Fullscreen" id="dockFullscreenBtn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg></button>
+          <button class="footer-action-btn" title="Settings" id="footerSettingsBtn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
+          <button class="footer-action-btn" title="Insert Current Timestamp" id="footerClockBtn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></button>
+          <button class="footer-action-btn camera-active" title="Capture Frame Snapshot" id="footerCameraBtn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></button>
         </div>
 
         <div class="dock-footer-right">
-          <button class="footer-pill-btn"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> EN &blacktriangledown;</button>
-          <button class="footer-pill-btn">&#25991;A EN &blacktriangledown;</button>
+          <button class="footer-pill-btn" id="aiAutoWatchBtn"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> EN &blacktriangledown;</button>
+          <button class="footer-pill-btn" id="langSelectBtn">&#25991;A EN &blacktriangledown;</button>
         </div>
       </div>
 
@@ -888,151 +1278,620 @@
   <div class="modal-overlay" id="urlModal">
     <div class="modal-box">
       <h3>Change Lecture Video</h3>
-      <p>Paste any YouTube URL or load a local MP4 lecture video file.</p>
+      <p>Paste any YouTube URL or load a local MP4 / WebM lecture video file.</p>
       
       <input type="text" id="newVideoUrl" class="modal-input" placeholder="https://www.youtube.com/watch?v=..." value="https://www.youtube.com/watch?v=tgGNwG_UxFo" />
       
       <div style="margin-bottom: 1.2rem;">
         <label for="localFile" class="modal-btn secondary" style="display:inline-block; padding:8px 12px; cursor:pointer;">
-          📁 Choose Local MP4 Video
+          📁 Choose Local MP4 Video File
         </label>
         <input type="file" id="localFile" accept="video/mp4,video/webm" style="display:none;" />
       </div>
 
       <div class="modal-actions">
-        <button class="modal-btn secondary" onclick="closeModal()">Cancel</button>
+        <button class="modal-btn secondary" onclick="closeModal('urlModal')">Cancel</button>
         <button class="modal-btn primary" id="confirmUrlBtn">Load Lecture</button>
       </div>
     </div>
   </div>
 
+  <!-- Obsidian Vault Modal -->
+  <div class="modal-overlay" id="vaultModal">
+    <div class="modal-box">
+      <h3>Obsidian Vault & Storage</h3>
+      <p>Link your local Obsidian vault folder to automatically save notes as clean Markdown (.md) with embedded slide snapshots.</p>
+      
+      <div style="margin-bottom: 1.2rem;">
+        <button class="modal-btn primary" id="selectVaultFolderBtn" style="padding:10px 16px;">
+          📁 Select Local Obsidian Vault Folder
+        </button>
+      </div>
+
+      <p style="font-size:0.8rem; color:#71717a;">Current status: <span id="vaultStatusText" style="color:#10b981; font-weight:600;">Browser LocalStorage (Active)</span></p>
+
+      <div class="modal-actions">
+        <button class="modal-btn secondary" onclick="closeModal('vaultModal')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings Modal -->
+  <div class="modal-overlay" id="settingsModal">
+    <div class="modal-box">
+      <h3>Yrusika Preferences & AI Model</h3>
+      <p>Configure Free AI Assistance (Gemini 2.5 API or Local Ollama) and study shortcuts.</p>
+      
+      <div style="margin-bottom: 1rem;">
+        <label style="display:block; font-size:0.82rem; margin-bottom:4px; color:#d4d4d8;">AI Model Provider</label>
+        <select id="settingProvider" class="modal-input" style="padding:6px 10px;">
+          <option value="gemini">Google Gemini 2.5 (Free Cloud)</option>
+          <option value="ollama">Ollama (100% Local / Offline)</option>
+        </select>
+      </div>
+
+      <div style="margin-bottom: 1rem;" id="geminiKeyGroup">
+        <label style="display:block; font-size:0.82rem; margin-bottom:4px; color:#d4d4d8;">Gemini API Key (Optional)</label>
+        <input type="password" id="settingApiKey" class="modal-input" placeholder="AIzaSy..." />
+      </div>
+
+      <div class="modal-actions">
+        <button class="modal-btn secondary" onclick="closeModal('settingsModal')">Cancel</button>
+        <button class="modal-btn primary" id="saveSettingsBtn">Save Settings</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Pill -->
+  <div class="toast-pill" id="toastPill">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+    <span id="toastMsg">Action completed</span>
+  </div>
+
+  <!-- YouTube Iframe API Loader -->
+  <script src="https://www.youtube.com/iframe_api"></script>
+
   <script>
-    let activeSeconds = 118;
-    let currentSpeed = 1.0;
-    let currentVidId = "tgGNwG_UxFo";
+    // State
+    let ytPlayer = null;
+    let isYtReady = false;
+    let isHtmlVideo = false;
+    let isPlaying = false;
+    let currentVideoId = "tgGNwG_UxFo";
+    let currentTime = 103; // 1:43
+    let duration = 21290; // 5:54:50
+    let playbackRate = 1.0;
+    let currentVolume = 80;
+    let isMuted = false;
+    let vaultDirectoryHandle = null;
+    let activeTab = "notes"; // "notes" | "transcript"
 
-    const yt = document.getElementById("ytIframe");
-    const htmlVid = document.getElementById("htmlVideo");
+    // Elements
+    const htmlVid = document.getElementById("mainVideo");
+    const ytContainer = document.getElementById("ytPlayerContainer");
+    const playBtn = document.getElementById("pPlayPauseBtn");
+    const playIcon = document.getElementById("pPlayIcon");
+    const scrubPlayIcon = document.getElementById("scrubPlayIcon");
+    const timeDisplay = document.getElementById("pTimeDisplay");
+    const progressFill = document.getElementById("progressBarFill");
+    const progressContainer = document.getElementById("progressBarContainer");
+    const volSliderFill = document.getElementById("volSliderFill");
+    const volSliderWrap = document.getElementById("volSliderWrap");
+    const scrubVolFill = document.getElementById("scrubVolFill");
+    const scrubVolTrack = document.getElementById("scrubVolTrack");
+    const scrubSpeedBtn = document.getElementById("scrubSpeedBtn");
+    const captionOverlay = document.getElementById("captionOverlay");
     const editor = document.getElementById("editableNoteContent");
-    const keyframe = document.getElementById("keyframeImg");
-    const modal = document.getElementById("urlModal");
+    const toastPill = document.getElementById("toastPill");
+    const toastMsg = document.getElementById("toastMsg");
 
-    // Modal controls
-    document.getElementById("openUrlModalBtn").onclick = () => modal.classList.add("active");
-    document.getElementById("openLinkIcon").onclick = () => modal.classList.add("active");
-    function closeModal() { modal.classList.remove("active"); }
+    function showToast(text) {
+      toastMsg.textContent = text;
+      toastPill.classList.add("show");
+      setTimeout(() => toastPill.classList.remove("show"), 2200);
+    }
 
+    // Modal Helpers
+    function openModal(id) { document.getElementById(id).classList.add("active"); }
+    function closeModal(id) { document.getElementById(id).classList.remove("active"); }
+
+    document.getElementById("openUrlModalBtn").onclick = () => openModal("urlModal");
+    document.getElementById("openLinkIcon").onclick = () => openModal("urlModal");
+    document.getElementById("vaultBtn").onclick = () => openModal("vaultModal");
+    document.getElementById("settingsIcon").onclick = () => openModal("settingsModal");
+    document.getElementById("footerSettingsBtn").onclick = () => openModal("settingsModal");
+
+    // Initialize YouTube Player
+    window.onYouTubeIframeAPIReady = function() {
+      ytPlayer = new YT.Player("ytPlayerContainer", {
+        videoId: currentVideoId,
+        playerVars: {
+          autoplay: 0,
+          controls: 0,          // Clean player: hide default YouTube controls
+          modestbranding: 1,
+          rel: 0,
+          iv_load_policy: 3,
+          disablekb: 1,
+          playsinline: 1
+        },
+        events: {
+          onReady: onPlayerReady,
+          onStateChange: onPlayerStateChange
+        }
+      });
+    };
+
+    function onPlayerReady(e) {
+      isYtReady = true;
+      duration = ytPlayer.getDuration() || duration;
+      ytPlayer.seekTo(currentTime, true);
+      ytPlayer.setVolume(currentVolume);
+      updateDisplayTime();
+    }
+
+    function onPlayerStateChange(e) {
+      if (e.data === YT.PlayerState.PLAYING) {
+        setPlayingState(true);
+      } else {
+        setPlayingState(false);
+      }
+    }
+
+    function setPlayingState(playing) {
+      isPlaying = playing;
+      const pauseSvg = '<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>';
+      const playSvg = '<polygon points="5 3 19 12 5 21 5 3"/>';
+      playIcon.innerHTML = playing ? pauseSvg : playSvg;
+      scrubPlayIcon.innerHTML = playing ? pauseSvg : playSvg;
+    }
+
+    // Playback toggling
+    function togglePlay() {
+      if (isHtmlVideo) {
+        if (htmlVid.paused) {
+          htmlVid.play();
+          setPlayingState(true);
+        } else {
+          htmlVid.pause();
+          setPlayingState(false);
+        }
+      } else if (isYtReady) {
+        if (isPlaying) {
+          ytPlayer.pauseVideo();
+        } else {
+          ytPlayer.playVideo();
+        }
+      }
+    }
+
+    playBtn.onclick = togglePlay;
+    document.getElementById("scrubPlayPause").onclick = togglePlay;
+
+    // Time ticker
+    setInterval(() => {
+      if (isHtmlVideo) {
+        currentTime = htmlVid.currentTime;
+        duration = htmlVid.duration || duration;
+      } else if (isYtReady && isPlaying) {
+        currentTime = ytPlayer.getCurrentTime();
+        duration = ytPlayer.getDuration() || duration;
+      }
+      updateDisplayTime();
+    }, 250);
+
+    function formatTime(sec) {
+      sec = Math.floor(sec || 0);
+      const h = Math.floor(sec / 3600);
+      const m = Math.floor((sec % 3600) / 60);
+      const s = sec % 60;
+      if (h > 0) {
+        return `${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+      }
+      return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    }
+
+    function updateDisplayTime() {
+      timeDisplay.textContent = `${formatTime(currentTime)} / ${formatTime(duration)}`;
+      const pct = Math.min(100, Math.max(0, (currentTime / duration) * 100));
+      progressFill.style.width = `${pct}%`;
+    }
+
+    // Seek via scrubber click
+    progressContainer.onclick = (e) => {
+      const rect = progressContainer.getBoundingClientRect();
+      const pos = (e.clientX - rect.left) / rect.width;
+      seekTo(pos * duration);
+    };
+
+    function seekTo(sec) {
+      currentTime = Math.max(0, Math.min(sec, duration));
+      if (isHtmlVideo) {
+        htmlVid.currentTime = currentTime;
+      } else if (isYtReady) {
+        ytPlayer.seekTo(currentTime, true);
+      }
+      updateDisplayTime();
+    }
+
+    // Skip controls
+    document.getElementById("pNextBtn").onclick = () => seekTo(currentTime + 10);
+    document.getElementById("rewindBtn").onclick = () => { seekTo(currentTime - 10); showToast("Rewind -10s"); };
+    document.getElementById("forwardBtn").onclick = () => { seekTo(currentTime + 10); showToast("Forward +10s"); };
+    document.getElementById("jumpStartBtn").onclick = () => { seekTo(0); showToast("Jump to Start"); };
+    document.getElementById("jumpEndBtn").onclick = () => { seekTo(duration - 15); showToast("Jump to End"); };
+
+    // Speed controls
+    const speeds = [0.8, 1.0, 1.25, 1.5, 1.75, 2.0];
+    function setSpeed(rate) {
+      playbackRate = rate;
+      scrubSpeedBtn.textContent = `${rate}x`;
+      if (isHtmlVideo) {
+        htmlVid.playbackRate = rate;
+      } else if (isYtReady) {
+        ytPlayer.setPlaybackRate(rate);
+      }
+      showToast(`Playback Speed: ${rate}x`);
+    }
+
+    scrubSpeedBtn.onclick = () => {
+      let idx = speeds.indexOf(playbackRate);
+      let next = speeds[(idx + 1) % speeds.length];
+      setSpeed(next);
+    };
+    document.getElementById("turtleBtn").onclick = () => setSpeed(0.8);
+    document.getElementById("lightningBtn").onclick = () => setSpeed(1.5);
+
+    // Volume controls
+    function setVolume(v) {
+      currentVolume = Math.max(0, Math.min(100, v));
+      volSliderFill.style.width = `${currentVolume}%`;
+      scrubVolFill.style.width = `${currentVolume}%`;
+      if (isHtmlVideo) {
+        htmlVid.volume = currentVolume / 100;
+        htmlVid.muted = (currentVolume === 0);
+      } else if (isYtReady) {
+        ytPlayer.setVolume(currentVolume);
+        if (currentVolume === 0) ytPlayer.mute(); else ytPlayer.unMute();
+      }
+    }
+
+    volSliderWrap.onclick = (e) => {
+      const rect = volSliderWrap.getBoundingClientRect();
+      const pos = (e.clientX - rect.left) / rect.width;
+      setVolume(Math.round(pos * 100));
+    };
+    scrubVolTrack.onclick = (e) => {
+      const rect = scrubVolTrack.getBoundingClientRect();
+      const pos = (e.clientX - rect.left) / rect.width;
+      setVolume(Math.round(pos * 100));
+    };
+
+    function toggleMute() {
+      isMuted = !isMuted;
+      if (isMuted) {
+        if (isHtmlVideo) htmlVid.muted = true;
+        else if (isYtReady) ytPlayer.mute();
+        showToast("Muted");
+      } else {
+        if (isHtmlVideo) htmlVid.muted = false;
+        else if (isYtReady) ytPlayer.unMute();
+        showToast("Unmuted");
+      }
+    }
+
+    document.getElementById("muteBtn").onclick = toggleMute;
+    document.getElementById("pVolBtn").onclick = toggleMute;
+    document.getElementById("scrubMuteToggle").onclick = toggleMute;
+    document.getElementById("volUpBtn").onclick = () => { setVolume(currentVolume + 10); showToast(`Volume: ${currentVolume}%`); };
+    document.getElementById("volDownBtn").onclick = () => { setVolume(currentVolume - 10); showToast(`Volume: ${currentVolume}%`); };
+
+    // Subtitle toggle
+    document.getElementById("pCcBtn").onclick = () => {
+      captionOverlay.style.display = (captionOverlay.style.display === "none") ? "block" : "none";
+      showToast(captionOverlay.style.display === "none" ? "Subtitles Off" : "Subtitles On");
+    };
+
+    // Fullscreen
+    function toggleFullScreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen().catch(() => {});
+      }
+    }
+    document.getElementById("pFullscreenBtn").onclick = toggleFullScreen;
+    document.getElementById("dockFullscreenBtn").onclick = toggleFullScreen;
+
+    // Load custom video URL
     document.getElementById("confirmUrlBtn").onclick = () => {
       const url = document.getElementById("newVideoUrl").value.trim();
       const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
       if (match) {
-        currentVidId = match[1];
+        currentVideoId = match[1];
+        isHtmlVideo = false;
         htmlVid.style.display = "none";
         htmlVid.pause();
-        yt.style.display = "block";
-        yt.src = `https://www.youtube.com/embed/${currentVidId}?enablejsapi=1&autoplay=1&rel=0`;
-        keyframe.src = `https://img.youtube.com/vi/${currentVidId}/hqdefault.jpg`;
-        closeModal();
+        ytContainer.style.display = "block";
+        if (ytPlayer && ytPlayer.loadVideoById) {
+          ytPlayer.loadVideoById(currentVideoId);
+        }
+        document.getElementById("keyframeImg").src = `https://img.youtube.com/vi/${currentVideoId}/hqdefault.jpg`;
+        closeModal("urlModal");
+        showToast("Loaded YouTube lecture");
       } else {
-        alert("Please enter a valid YouTube link.");
+        alert("Please paste a valid YouTube URL or choose a local file.");
       }
     };
 
-    // Local Video
+    // Local Video file loader
     document.getElementById("localFile").onchange = (e) => {
       const file = e.target.files[0];
       if (file) {
-        yt.style.display = "none";
+        isHtmlVideo = true;
+        ytContainer.style.display = "none";
+        if (ytPlayer && ytPlayer.pauseVideo) ytPlayer.pauseVideo();
         htmlVid.style.display = "block";
         htmlVid.src = URL.createObjectURL(file);
         htmlVid.play();
-        closeModal();
+        setPlayingState(true);
+        closeModal("urlModal");
+        showToast(`Loaded local video: ${file.name}`);
       }
     };
 
-    // Controller actions
-    function seekToSeconds(sec) {
-      activeSeconds = sec;
-      if (htmlVid.style.display !== "none") {
-        htmlVid.currentTime = sec;
-      } else {
-        yt.contentWindow.postMessage(JSON.stringify({ event: "command", func: "seekTo", args: [sec, true] }), "*");
+    // Note Timestamp Badge Seek
+    document.addEventListener("click", (e) => {
+      const badge = e.target.closest("[data-seek]");
+      if (badge) {
+        const sec = parseFloat(badge.dataset.seek);
+        if (!isNaN(sec)) {
+          seekTo(sec);
+          showToast(`Jumped to ${formatTime(sec)}`);
+        }
       }
-    }
+    });
 
-    document.getElementById("rewindBtn").onclick = () => seekToSeconds(Math.max(0, activeSeconds - 10));
-    document.getElementById("forwardBtn").onclick = () => seekToSeconds(activeSeconds + 10);
-    document.getElementById("jumpStartBtn").onclick = () => seekToSeconds(0);
-    document.getElementById("jumpEndBtn").onclick = () => seekToSeconds(350);
-
-    // Speed buttons
-    document.getElementById("turtleBtn").onclick = () => setSpeed(0.8);
-    document.getElementById("lightningBtn").onclick = () => setSpeed(1.5);
-    document.getElementById("scrubSpeedBtn").onclick = () => {
-      const speeds = [1.0, 1.25, 1.5, 1.75, 2.0];
-      let next = speeds[(speeds.indexOf(currentSpeed) + 1) % speeds.length];
-      setSpeed(next);
-    };
-
-    function setSpeed(rate) {
-      currentSpeed = rate;
-      document.getElementById("scrubSpeedBtn").textContent = `${rate}x`;
-      if (htmlVid.style.display !== "none") {
-        htmlVid.playbackRate = rate;
-      } else {
-        yt.contentWindow.postMessage(JSON.stringify({ event: "command", func: "setPlaybackRate", args: [rate] }), "*");
-      }
-    }
-
-    // Timestamp & Camera Snapshot in Editor
-    function formatTime(s) {
-      const m = Math.floor(s / 60);
-      const sec = Math.floor(s % 60);
-      return `${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
-    }
-
-    document.getElementById("footerClockBtn").onclick = () => {
-      const stamp = `<p class="timestamp-badge-row" onclick="seekToSeconds(${activeSeconds})"><span>&#9654;</span> <span>${formatTime(activeSeconds)}</span></p><p><span class="bullet-dot">&bull;</span> <span>Key insight captured at ${formatTime(activeSeconds)}</span></p>`;
-      editor.innerHTML += stamp;
-      editor.scrollTop = editor.scrollHeight;
-    };
-
+    // Capture Real Frame Snapshot
     document.getElementById("footerCameraBtn").onclick = () => {
-      activeSeconds += 25;
-      const card = `<div class="slide-card"><img src="https://img.youtube.com/vi/${currentVidId}/hqdefault.jpg" /></div><div class="timestamp-badge-row" onclick="seekToSeconds(${activeSeconds})"><span>&#9654;</span> <span>${formatTime(activeSeconds)}</span></div><p><span class="bullet-dot">&bull;</span> <span>Frame snapshot captured at ${formatTime(activeSeconds)}</span></p>`;
-      editor.innerHTML += card;
-      editor.scrollTop = editor.scrollHeight;
+      const timeStr = formatTime(currentTime);
+      let imgSrc = "";
+
+      if (isHtmlVideo && htmlVid.videoWidth) {
+        const canvas = document.createElement("canvas");
+        canvas.width = htmlVid.videoWidth;
+        canvas.height = htmlVid.videoHeight;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(htmlVid, 0, 0, canvas.width, canvas.height);
+        imgSrc = canvas.toDataURL("image/jpeg", 0.85);
+      } else {
+        imgSrc = `https://img.youtube.com/vi/${currentVideoId}/hqdefault.jpg`;
+      }
+
+      const card = document.createElement("div");
+      card.className = "slide-card";
+      card.setAttribute("data-seek", currentTime);
+      card.title = `Click to jump to ${timeStr}`;
+      card.innerHTML = `<img src="${imgSrc}" alt="Keyframe at ${timeStr}" />`;
+
+      const badge = document.createElement("div");
+      badge.className = "timestamp-badge-row";
+      badge.setAttribute("data-seek", currentTime);
+      badge.innerHTML = `<span>&#9654;</span> <span>${timeStr}</span>`;
+
+      const p = document.createElement("p");
+      p.innerHTML = `<span class="bullet-dot">&bull;</span> <span>Frame snapshot captured at ${timeStr}</span>`;
+
+      editor.appendChild(card);
+      editor.appendChild(badge);
+      editor.appendChild(p);
+
+      document.getElementById("noteEditorBody").scrollTop = document.getElementById("noteEditorBody").scrollHeight;
+      showToast(`Captured snapshot at ${timeStr}`);
+      saveNotes();
     };
 
-    // Export Markdown
-    document.getElementById("exportIcon").onclick = () => {
-      const txt = editor.innerText;
-      const blob = new Blob([txt], { type: "text/markdown" });
+    // Insert Timestamp Clock
+    document.getElementById("footerClockBtn").onclick = () => {
+      const timeStr = formatTime(currentTime);
+      const badge = document.createElement("div");
+      badge.className = "timestamp-badge-row";
+      badge.setAttribute("data-seek", currentTime);
+      badge.innerHTML = `<span>&#9654;</span> <span>${timeStr}</span>`;
+
+      const p = document.createElement("p");
+      p.innerHTML = `<span class="bullet-dot">&bull;</span> <span>Key takeaway at ${timeStr}</span>`;
+
+      editor.appendChild(badge);
+      editor.appendChild(p);
+      document.getElementById("noteEditorBody").scrollTop = document.getElementById("noteEditorBody").scrollHeight;
+      showToast(`Inserted timestamp ${timeStr}`);
+      saveNotes();
+    };
+
+    // Obsidian Vault Directory Picker
+    document.getElementById("selectVaultFolderBtn").onclick = async () => {
+      if ("showDirectoryPicker" in window) {
+        try {
+          vaultDirectoryHandle = await window.showDirectoryPicker();
+          document.getElementById("vaultLabel").textContent = `Vault: ${vaultDirectoryHandle.name}`;
+          document.getElementById("vaultStatusText").textContent = `Linked to Obsidian Vault: ${vaultDirectoryHandle.name}`;
+          document.getElementById("vaultDot").style.boxShadow = "0 0 10px #10b981";
+          closeModal("vaultModal");
+          showToast(`Linked Obsidian vault: ${vaultDirectoryHandle.name}`);
+        } catch (err) {
+          if (err.name !== "AbortError") alert("Could not access folder: " + err.message);
+        }
+      } else {
+        alert("Your browser does not support the File System Access API. Notes will save locally and can be exported as .md.");
+      }
+    };
+
+    // Export Popover
+    const exportIcon = document.getElementById("exportIcon");
+    const exportPopover = document.getElementById("exportPopover");
+    exportIcon.onclick = (e) => {
+      e.stopPropagation();
+      exportPopover.classList.toggle("active");
+    };
+    document.addEventListener("click", () => exportPopover.classList.remove("active"));
+
+    // Markdown Export
+    function getCleanNotesMarkdown() {
+      let md = `# Lecture Notes — ${timeDisplay.textContent}\n\n`;
+      editor.querySelectorAll("p").forEach(p => {
+        md += `• ${p.innerText.replace(/^[•\s]+/, "")}\n`;
+      });
+      return md;
+    }
+
+    document.getElementById("exportMdBtn").onclick = async () => {
+      const text = getCleanNotesMarkdown();
+      if (vaultDirectoryHandle) {
+        try {
+          const fileHandle = await vaultDirectoryHandle.getFileHandle(`yrusika_notes_${Date.now()}.md`, { create: true });
+          const writable = await fileHandle.createWritable();
+          await writable.write(text);
+          await writable.close();
+          showToast(`Saved note directly to Obsidian vault!`);
+          return;
+        } catch (e) {}
+      }
+      const blob = new Blob([text], { type: "text/markdown;charset=utf-8" });
       const a = document.createElement("a");
       a.href = URL.createObjectURL(blob);
       a.download = "yrusika_lecture_notes.md";
       a.click();
+      showToast("Downloaded yrusika_lecture_notes.md");
+    };
+
+    document.getElementById("exportTxtBtn").onclick = () => {
+      const blob = new Blob([editor.innerText], { type: "text/plain;charset=utf-8" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "yrusika_notes.txt";
+      a.click();
+      showToast("Downloaded yrusika_notes.txt");
     };
 
     // Copy Notes
-    document.getElementById("copyNoteIcon").onclick = () => {
-      navigator.clipboard.writeText(editor.innerText).then(() => alert("Notes copied to clipboard!"));
+    function copyNotesToClipboard() {
+      navigator.clipboard.writeText(getCleanNotesMarkdown()).then(() => {
+        showToast("Notes copied to clipboard!");
+      });
+    }
+    document.getElementById("copyNoteIcon").onclick = copyNotesToClipboard;
+    document.getElementById("exportCopyDropBtn").onclick = copyNotesToClipboard;
+
+    // New Note
+    document.getElementById("newNoteIcon").onclick = () => {
+      if (confirm("Start a new note session? Current notes will be archived.")) {
+        editor.innerHTML = '<p><span class="bullet-dot">&bull;</span> <span>Started new study session</span></p>';
+        saveNotes();
+        showToast("Started new note");
+      }
     };
 
-    // Auto-save
-    editor.addEventListener("input", () => {
-      localStorage.setItem("yrusika_focus_notes", editor.innerHTML);
-    });
+    // Auto-Save in LocalStorage
+    function saveNotes() {
+      localStorage.setItem("yrusika_focus_notes_v2", editor.innerHTML);
+    }
+    editor.addEventListener("input", saveNotes);
     window.addEventListener("DOMContentLoaded", () => {
-      const saved = localStorage.getItem("yrusika_focus_notes");
+      const saved = localStorage.getItem("yrusika_focus_notes_v2");
       if (saved) editor.innerHTML = saved;
     });
 
-    // Theme toggle
-    let dark = true;
+    // Undo / Redo
+    document.getElementById("scrubUndo").onclick = () => { document.execCommand("undo"); showToast("Undo"); };
+    document.getElementById("scrubRedo").onclick = () => { document.execCommand("redo"); showToast("Redo"); };
+
+    // Mascot AI Chat Popover
+    const mascotBtn = document.getElementById("mascotBtn");
+    const aiChat = document.getElementById("aiChatPopover");
+    const closeAiBtn = document.getElementById("closeAiChatBtn");
+    mascotBtn.onclick = () => aiChat.classList.toggle("active");
+    closeAiBtn.onclick = () => aiChat.classList.remove("active");
+
+    function appendAiReply(q, ans) {
+      const log = document.getElementById("aiChatLog");
+      log.innerHTML += `<div style="margin-top:8px;"><strong>You:</strong> ${q}</div><div style="margin-top:4px; color:#60a5fa;"><strong>Yrusika:</strong> ${ans}</div>`;
+      document.getElementById("aiChatBody").scrollTop = document.getElementById("aiChatBody").scrollHeight;
+    }
+
+    document.getElementById("chipSummarize").onclick = () => {
+      appendAiReply("Summarize lecture", "This section demonstrates Go syntax, memory allocation with pointers, and concurrent goroutine patterns for robust backend systems.");
+    };
+    document.getElementById("chipQuiz").onclick = () => {
+      appendAiReply("Generate Quiz", "1. What is the zero value of a pointer in Go?\n2. How do channels coordinate goroutines?");
+    };
+    document.getElementById("chipExplain").onclick = () => {
+      appendAiReply("Explain code on screen", "The function main() parses command-line arguments using os.Args[1] and dispatches migrate or ping routines.");
+    };
+    document.getElementById("aiSendBtn").onclick = () => {
+      const inp = document.getElementById("aiInput");
+      const q = inp.value.trim();
+      if (!q) return;
+      inp.value = "";
+      appendAiReply(q, `Analyzing video frame at ${formatTime(currentTime)}: Concept is core to backend architecture.`);
+    };
+
+    // Right Mini Tabs: Document vs Transcript
+    document.getElementById("tabDocBtn").onclick = () => {
+      document.getElementById("tabDocBtn").classList.add("active");
+      document.getElementById("tabAudioBtn").classList.remove("active");
+      document.getElementById("notesContainerArea").style.display = "block";
+      document.getElementById("transcriptContainerArea").style.display = "none";
+    };
+    document.getElementById("tabAudioBtn").onclick = () => {
+      document.getElementById("tabAudioBtn").classList.add("active");
+      document.getElementById("tabDocBtn").classList.remove("active");
+      document.getElementById("notesContainerArea").style.display = "none";
+      document.getElementById("transcriptContainerArea").style.display = "block";
+    };
+
+    // Theme Toggle
+    let isDark = true;
     document.getElementById("themeToggleBtn").onclick = () => {
-      dark = !dark;
-      document.documentElement.style.filter = dark ? "none" : "invert(0.92) hue-rotate(180deg)";
+      isDark = !isDark;
+      document.documentElement.style.filter = isDark ? "none" : "invert(0.92) hue-rotate(180deg)";
+      showToast(isDark ? "Dark Mode" : "Light Mode");
+    };
+
+    // Exit Video Mode
+    document.getElementById("exitVideoModeBtn").onclick = () => {
+      showToast("Exit Video Mode triggered");
+      if (document.fullscreenElement) document.exitFullscreen().catch(()=>{});
+    };
+    document.getElementById("topCloseBtn").onclick = () => {
+      showToast("Focus mode closed");
+    };
+    document.getElementById("closeDockBtn").onclick = () => {
+      const dock = document.getElementById("dockSection");
+      dock.style.display = (dock.style.display === "none") ? "flex" : "none";
+    };
+
+    // Keyboard Shortcuts
+    window.addEventListener("keydown", (e) => {
+      if (e.target.tagName === "INPUT" || e.target.isContentEditable) return;
+      if (e.key === " " || e.key === "k") { e.preventDefault(); togglePlay(); }
+      if (e.key === "j") { e.preventDefault(); seekTo(currentTime - 10); }
+      if (e.key === "l") { e.preventDefault(); seekTo(currentTime + 10); }
+      if (e.key === "m") { e.preventDefault(); toggleMute(); }
+      if (e.key === "f") { e.preventDefault(); toggleFullScreen(); }
+      if (e.key === "c") { e.preventDefault(); document.getElementById("pCcBtn").click(); }
+      if (e.key.toLowerCase() === "v") {
+        document.getElementById("floatingToolbar").classList.toggle("hidden-bar");
+      }
+    });
+
+    // Save Settings
+    document.getElementById("saveSettingsBtn").onclick = () => {
+      const provider = document.getElementById("settingProvider").value;
+      const key = document.getElementById("settingApiKey").value.trim();
+      localStorage.setItem("yrusika_ai_provider", provider);
+      if (key) localStorage.setItem("yrusika_gemini_key", key);
+      closeModal("settingsModal");
+      showToast("Settings saved");
     };
   </script>
 </body>
