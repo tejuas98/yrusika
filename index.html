@@ -49,6 +49,39 @@
       height: 100vh;
       background: var(--bg-video);
       overflow: hidden;
+      position: relative;
+    }
+
+    .dock-section.collapsed {
+      width: 0 !important;
+      min-width: 0 !important;
+      padding: 0 !important;
+      border: none !important;
+      overflow: hidden !important;
+    }
+
+    .reopen-dock-btn {
+      display: none;
+      position: fixed;
+      top: 50%;
+      right: 0;
+      transform: translateY(-50%);
+      background: #18181f;
+      border: 1px solid #3b82f6;
+      border-right: none;
+      color: #ffffff;
+      padding: 10px 14px;
+      border-radius: 8px 0 0 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      z-index: 1000;
+      box-shadow: -4px 0 16px rgba(0,0,0,0.6);
+      transition: background 0.2s;
+    }
+
+    .reopen-dock-btn:hover {
+      background: #2563eb;
     }
 
     /* Left Side: Video Section */
@@ -138,30 +171,32 @@
       height: calc(100vh - 42px);
       background: #000;
       position: relative;
+      overflow: hidden;
       display: flex;
       align-items: center;
       justify-content: center;
-      overflow: hidden;
     }
 
-    /* Clean Video Elements */
     .video-viewport iframe,
     .video-viewport video {
+      position: absolute;
+      top: 0;
+      left: 0;
       width: 100%;
       height: 100%;
       border: none;
       outline: none;
-      object-fit: contain;
       background: #000;
+      z-index: 1;
     }
 
     /* Subtitle Caption Overlay */
     .video-caption-overlay {
       position: absolute;
-      bottom: 60px;
+      bottom: 58px;
       left: 50%;
       transform: translateX(-50%);
-      background: rgba(0, 0, 0, 0.88);
+      background: rgba(0, 0, 0, 0.9);
       color: #ffffff;
       padding: 6px 16px;
       border-radius: 6px;
@@ -172,8 +207,34 @@
       z-index: 30;
       text-align: center;
       box-shadow: 0 4px 14px rgba(0,0,0,0.7);
-      transition: opacity 0.3s;
       max-width: 80%;
+      transition: opacity 0.3s;
+    }
+
+    /* Unmute helper banner */
+    .unmute-banner {
+      position: absolute;
+      top: 60px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(37, 99, 235, 0.92);
+      color: #ffffff;
+      padding: 7px 18px;
+      border-radius: 20px;
+      font-size: 0.88rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      z-index: 50;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+      transition: all 0.2s;
+    }
+
+    .unmute-banner:hover {
+      background: #1d4ed8;
+      transform: translateX(-50%) scale(1.03);
     }
 
     /* Custom Video Controls Bar at bottom of Video */
@@ -183,17 +244,16 @@
       left: 0;
       right: 0;
       height: 48px;
-      background: linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.6) 70%, transparent 100%);
+      background: linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.55) 70%, transparent 100%);
       display: flex;
       flex-direction: column;
       justify-content: flex-end;
       padding: 0 16px 8px 16px;
       z-index: 40;
-      opacity: 1;
-      transition: opacity 0.3s;
+      pointer-events: auto;
     }
 
-    /* Progress Scrubber */
+    /* Scrubber Track */
     .progress-bar-container {
       width: 100%;
       height: 14px;
@@ -217,7 +277,7 @@
     }
 
     .progress-bar-fill {
-      width: 28%;
+      width: 29%;
       height: 100%;
       background: var(--yt-red);
       border-radius: 2px;
@@ -316,6 +376,7 @@
       font-size: 0.82rem;
       color: var(--text-muted);
       font-family: var(--font-mono);
+      z-index: 10;
     }
 
     .video-footer strong {
@@ -343,7 +404,7 @@
       color: #fff;
     }
 
-    /* Right Side: Yrusika Note Workstation Dock */
+    /* Right Side: Yrusika Note Workstation Dock (Exact match to Extension) */
     .dock-section {
       flex: 0 0 520px;
       width: 520px;
@@ -368,9 +429,9 @@
     .dock-breadcrumbs {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
       font-size: 0.88rem;
-      color: #e4e4e7;
+      color: #f4f4f5;
       font-weight: 600;
       letter-spacing: -0.2px;
     }
@@ -384,7 +445,7 @@
     .dock-header-actions {
       display: flex;
       align-items: center;
-      gap: 4px;
+      gap: 6px;
     }
 
     .icon-btn {
@@ -405,7 +466,7 @@
       color: #fff;
     }
 
-    /* Exit Video Mode Button */
+    /* Exit Video Mode Button (Exact match) */
     .exit-mode-row {
       padding: 8px 12px;
       border-bottom: 1px solid var(--border-color);
@@ -547,50 +608,22 @@
       user-select: text;
     }
 
-    /* Floating Tab in Right Margin (Document / Audio Wave) */
-    .note-side-toolbar {
-      position: absolute;
-      top: 1.4rem;
-      right: 14px;
+    /* Slide Card */
+    .slide-card-wrap {
+      position: relative;
+      margin-bottom: 0.9rem;
       display: flex;
-      flex-direction: column;
-      background: #18181f;
-      border: 1px solid #2a2a36;
-      border-radius: 6px;
-      overflow: hidden;
-      z-index: 20;
+      align-items: flex-start;
+      gap: 8px;
     }
 
-    .note-side-btn {
-      background: transparent;
-      border: none;
-      color: #9ca3af;
-      padding: 5px 6px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.15s;
-    }
-
-    .note-side-btn.active, .note-side-btn:hover {
-      background: rgba(255, 255, 255, 0.1);
-      color: #fff;
-    }
-
-    .note-side-btn + .note-side-btn {
-      border-top: 1px solid #2a2a36;
-    }
-
-    /* Slide Keyframe Card */
     .slide-card {
+      position: relative;
+      flex: 1;
       background: #000;
       border: 1px solid #272730;
       border-radius: 8px;
       overflow: hidden;
-      margin-bottom: 0.9rem;
-      position: relative;
-      max-width: 92%;
       cursor: pointer;
       transition: border-color 0.2s;
     }
@@ -599,15 +632,74 @@
       border-color: #3b82f6;
     }
 
+    .slide-card .slide-tooltip {
+      position: absolute;
+      top: 6px;
+      left: 6px;
+      background: rgba(0, 0, 0, 0.95);
+      border: 1px solid #38bdf8;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 500;
+      padding: 3px 8px;
+      border-radius: 4px;
+      white-space: nowrap;
+      pointer-events: none;
+      opacity: 0;
+      transform: translateY(3px);
+      transition: opacity 0.15s, transform 0.15s;
+      z-index: 50;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.8);
+    }
+
+    .slide-card:hover .slide-tooltip {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
     .slide-card img {
       width: 100%;
       height: auto;
       display: block;
-      aspect-ratio: 16/9;
       object-fit: cover;
       background: #1a1a24;
     }
 
+    /* Right Margin Floating Mini-Tab (Exact match) */
+    .side-tab-pill {
+      width: 26px;
+      background: #18181f;
+      border: 1px solid #2a2a36;
+      border-radius: 6px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      flex-shrink: 0;
+      margin-top: 4px;
+    }
+
+    .side-tab-item {
+      background: transparent;
+      border: none;
+      color: #9ca3af;
+      padding: 6px 4px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+    }
+
+    .side-tab-item.active, .side-tab-item:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+
+    .side-tab-item + .side-tab-item {
+      border-top: 1px solid #2a2a36;
+    }
+
+    /* Clickable Timestamp Link Badge */
     .timestamp-badge-row {
       display: flex;
       align-items: center;
@@ -630,9 +722,9 @@
     .note-text-block {
       font-size: 0.93rem;
       color: #e4e4e7;
-      line-height: 1.7;
+      line-height: 1.75;
       outline: none;
-      min-height: 100px;
+      min-height: 120px;
     }
 
     .note-text-block p {
@@ -648,23 +740,23 @@
       line-height: 1;
     }
 
-    /* Mascot Button (Bottom Right of Note area) */
+    /* Exact Extension Mascot Button (Bottom Right) */
     .mascot-button {
       position: absolute;
       bottom: 58px;
       right: 18px;
-      width: 36px;
-      height: 36px;
-      background: #2563eb;
+      width: 40px;
+      height: 40px;
+      background: #1d4ed8;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.5);
+      box-shadow: 0 4px 14px rgba(29, 78, 216, 0.5);
       cursor: pointer;
       transition: transform 0.2s;
       z-index: 10;
-      border: 2px solid rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.2);
     }
 
     .mascot-button:hover {
@@ -672,12 +764,13 @@
     }
 
     .mascot-button img {
-      width: 24px;
-      height: 24px;
+      width: 32px;
+      height: 32px;
       object-fit: contain;
+      display: block;
     }
 
-    /* AI Assistant Chat Popover */
+    /* AI Chat Popover */
     .ai-chat-popover {
       display: none;
       position: absolute;
@@ -767,7 +860,7 @@
       font-weight: 500;
     }
 
-    /* Scrub Bar above footer */
+    /* Scrub Bar (Exact Match) */
     .scrub-bar {
       height: 38px;
       background: #0a0a0d;
@@ -823,7 +916,7 @@
       border-radius: 50%;
     }
 
-    /* Dock Footer Action Bar */
+    /* Dock Footer Action Bar (Exact match) */
     .dock-footer {
       height: 48px;
       background: var(--bg-dock);
@@ -996,6 +1089,9 @@
 
   <div class="app-container">
 
+    <!-- Reopen Dock Pill when collapsed -->
+    <button class="reopen-dock-btn" id="reopenDockBtn" onclick="toggleVideoMode()" title="Reopen Notes Dock">&lsaquo; Notes</button>
+
     <!-- Left Half: Clean Video Player Viewport -->
     <div class="video-section">
 
@@ -1044,17 +1140,30 @@
 
       <!-- Video Player Viewport -->
       <div class="video-viewport" id="videoViewport">
-        <!-- Native HTML5 Video Element (Clean, Full Screen, Frame Capture Ready) -->
-        <video id="mainVideo" playsinline preload="auto"></video>
-        
-        <!-- YouTube IFrame API Container (controls=0, no clutter) -->
-        <div id="ytPlayerContainer" style="width:100%; height:100%;"></div>
+        <!-- Live YouTube Player Iframe (Active, Visible & Auto-playing) -->
+        <iframe 
+          id="ytIframe"
+          src="https://www.youtube.com/embed/tgGNwG_UxFo?autoplay=1&mute=1&playsinline=1&controls=1&enablejsapi=1&rel=0" 
+          title="Lecture Video"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+          referrerpolicy="strict-origin-when-cross-origin"
+          allowfullscreen>
+        </iframe>
 
-        <!-- Subtitle Overlay -->
+        <!-- Fallback HTML5 Video Element for Local Files -->
+        <video id="mainVideo" playsinline preload="auto" controls style="display:none; width:100%; height:100%;"></video>
+
+        <!-- Dynamic Caption Box -->
         <div class="video-caption-overlay" id="captionOverlay">series of steps that we are going to follow</div>
 
-        <!-- Custom Video Controls Bar -->
-        <div class="custom-player-bar" id="customPlayerBar">
+        <!-- Unmute helper banner -->
+        <div class="unmute-banner" id="unmuteBanner" onclick="unmuteVideo()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+          <span>Video is playing &middot; Click to unmute audio</span>
+        </div>
+
+        <!-- Custom Video Controls Bar (Only active for local files or fallback) -->
+        <div class="custom-player-bar" id="customPlayerBar" style="display:none;">
           <!-- Scrubber Timeline Track -->
           <div class="progress-bar-container" id="progressBarContainer">
             <div class="progress-bar-track">
@@ -1110,7 +1219,7 @@
 
     </div>
 
-    <!-- Right Half: Yrusika Note-Taking Dock -->
+    <!-- Right Half: Yrusika Note Workstation Dock (Exact match to Extension) -->
     <div class="dock-section" id="dockSection">
 
       <!-- Dock Header -->
@@ -1128,10 +1237,10 @@
         </div>
       </div>
 
-      <!-- Exit Video Mode Pill -->
+      <!-- Exit Video Mode Pill (Exact match to Extension) -->
       <div class="exit-mode-row">
         <button class="exit-video-btn" id="exitVideoModeBtn">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m1 1 22 22m-5.46-5.46H20a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H6.46M2 8v10a2 2 0 0 0 2 2h10m-6 3v-3m4 3v-3"/></svg>
           Exit Video Mode
         </button>
       </div>
@@ -1173,21 +1282,24 @@
       <!-- Note Editor Body -->
       <div class="note-editor-body" id="noteEditorBody">
         
-        <!-- Right Margin Floating Icon Tab -->
-        <div class="note-side-toolbar">
-          <button class="note-side-btn active" id="tabDocBtn" title="Document Notes">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-          </button>
-          <button class="note-side-btn" id="tabAudioBtn" title="Audio Transcript">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 10v4M6 6v12M10 3v18M14 8v8M18 5v14M22 10v4"/></svg>
-          </button>
-        </div>
-
         <!-- Notes Container -->
         <div id="notesContainerArea">
-          <!-- Slide Snapshot Card -->
-          <div class="slide-card" id="mainSlideCard" title="Click to jump to 00:01:58">
-            <img id="keyframeImg" src="assets/slide-sample.png" onerror="this.src='https://img.youtube.com/vi/tgGNwG_UxFo/hqdefault.jpg'" alt="Slide Keyframe" />
+          <!-- Slide Snapshot Card & Mini-Tab Row (Exact Extension Layout) -->
+          <div class="slide-card-wrap">
+            <div class="slide-card" id="mainSlideCard" data-seek="118">
+              <div class="slide-tooltip">Click to jump to 00:01:58</div>
+              <img id="keyframeImg" src="assets/slide-exact.png" onerror="this.src='assets/slide-sample.png'" alt="Slide Keyframe" />
+            </div>
+
+            <!-- Mini Vertical Tab (Attached next to card) -->
+            <div class="side-tab-pill">
+              <button class="side-tab-item active" id="tabDocBtn" title="Document Notes">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              </button>
+              <button class="side-tab-item" id="tabAudioBtn" title="Audio Transcript">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 10v4M6 6v12M10 3v18M14 8v8M18 5v14M22 10v4"/></svg>
+              </button>
+            </div>
           </div>
 
           <!-- Clickable Timestamp Link Badge -->
@@ -1196,7 +1308,7 @@
             <span id="firstTimestampText">00:01:58</span>
           </div>
 
-          <!-- Editable Note Points -->
+          <!-- Editable Note Points (Exact typography & content) -->
           <div class="note-text-block" id="editableNoteContent" contenteditable="true" spellcheck="false">
             <p><span class="bullet-dot">&bull;</span> <span>A resource used to guide the learning process</span></p>
             <p><span class="bullet-dot">&bull;</span> <span>Features an interactive playground to run code in a sandbox</span></p>
@@ -1214,9 +1326,9 @@
 
       </div>
 
-      <!-- Mascot Button (Bottom Right) -->
+      <!-- Exact Extension Mascot Button (Bottom Right) -->
       <div class="mascot-button" id="mascotBtn" title="Ask Yrusika AI Assistant">
-        <img src="assets/icons/icon48.png" alt="Mascot" />
+        <img src="assets/mascot-clean.png" onerror="this.src='assets/icons/icon48.png'" alt="Mascot" />
       </div>
 
       <!-- AI Chat Popover -->
@@ -1242,7 +1354,7 @@
         </div>
       </div>
 
-      <!-- Scrub Bar -->
+      <!-- Scrub Bar (Exact Extension Match) -->
       <div class="scrub-bar">
         <button class="scrub-speed" id="scrubSpeedBtn" title="Cycle Playback Speed">1x</button>
         <div class="scrub-controls">
@@ -1255,7 +1367,7 @@
         </div>
       </div>
 
-      <!-- Dock Footer Action Bar -->
+      <!-- Dock Footer Action Bar (Exact Extension Match) -->
       <div class="dock-footer">
         <div class="dock-footer-left">
           <button class="footer-action-btn" title="Toggle Fullscreen" id="dockFullscreenBtn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg></button>
@@ -1348,15 +1460,10 @@
     <span id="toastMsg">Action completed</span>
   </div>
 
-  <!-- YouTube Iframe API Loader -->
-  <script src="https://www.youtube.com/iframe_api"></script>
-
   <script>
     // State
-    let ytPlayer = null;
-    let isYtReady = false;
     let isHtmlVideo = false;
-    let isPlaying = false;
+    let isPlaying = true;
     let currentVideoId = "tgGNwG_UxFo";
     let currentTime = 103; // 1:43
     let duration = 21290; // 5:54:50
@@ -1364,11 +1471,10 @@
     let currentVolume = 80;
     let isMuted = false;
     let vaultDirectoryHandle = null;
-    let activeTab = "notes"; // "notes" | "transcript"
 
     // Elements
+    const ytIframe = document.getElementById("ytIframe");
     const htmlVid = document.getElementById("mainVideo");
-    const ytContainer = document.getElementById("ytPlayerContainer");
     const playBtn = document.getElementById("pPlayPauseBtn");
     const playIcon = document.getElementById("pPlayIcon");
     const scrubPlayIcon = document.getElementById("scrubPlayIcon");
@@ -1401,39 +1507,14 @@
     document.getElementById("settingsIcon").onclick = () => openModal("settingsModal");
     document.getElementById("footerSettingsBtn").onclick = () => openModal("settingsModal");
 
-    // Initialize YouTube Player
-    window.onYouTubeIframeAPIReady = function() {
-      ytPlayer = new YT.Player("ytPlayerContainer", {
-        videoId: currentVideoId,
-        playerVars: {
-          autoplay: 0,
-          controls: 0,          // Clean player: hide default YouTube controls
-          modestbranding: 1,
-          rel: 0,
-          iv_load_policy: 3,
-          disablekb: 1,
-          playsinline: 1
-        },
-        events: {
-          onReady: onPlayerReady,
-          onStateChange: onPlayerStateChange
-        }
-      });
-    };
-
-    function onPlayerReady(e) {
-      isYtReady = true;
-      duration = ytPlayer.getDuration() || duration;
-      ytPlayer.seekTo(currentTime, true);
-      ytPlayer.setVolume(currentVolume);
-      updateDisplayTime();
-    }
-
-    function onPlayerStateChange(e) {
-      if (e.data === YT.PlayerState.PLAYING) {
-        setPlayingState(true);
-      } else {
-        setPlayingState(false);
+    // YouTube postMessage API helper
+    function sendYtCommand(func, args = []) {
+      if (!isHtmlVideo && ytIframe && ytIframe.contentWindow) {
+        ytIframe.contentWindow.postMessage(JSON.stringify({
+          event: "command",
+          func: func,
+          args: args
+        }), "*");
       }
     }
 
@@ -1445,7 +1526,7 @@
       scrubPlayIcon.innerHTML = playing ? pauseSvg : playSvg;
     }
 
-    // Playback toggling
+    // Toggle Play/Pause
     function togglePlay() {
       if (isHtmlVideo) {
         if (htmlVid.paused) {
@@ -1455,11 +1536,13 @@
           htmlVid.pause();
           setPlayingState(false);
         }
-      } else if (isYtReady) {
+      } else {
         if (isPlaying) {
-          ytPlayer.pauseVideo();
+          sendYtCommand("pauseVideo");
+          setPlayingState(false);
         } else {
-          ytPlayer.playVideo();
+          sendYtCommand("playVideo");
+          setPlayingState(true);
         }
       }
     }
@@ -1472,9 +1555,8 @@
       if (isHtmlVideo) {
         currentTime = htmlVid.currentTime;
         duration = htmlVid.duration || duration;
-      } else if (isYtReady && isPlaying) {
-        currentTime = ytPlayer.getCurrentTime();
-        duration = ytPlayer.getDuration() || duration;
+      } else if (isPlaying) {
+        currentTime += 0.25 * playbackRate;
       }
       updateDisplayTime();
     }, 250);
@@ -1507,8 +1589,8 @@
       currentTime = Math.max(0, Math.min(sec, duration));
       if (isHtmlVideo) {
         htmlVid.currentTime = currentTime;
-      } else if (isYtReady) {
-        ytPlayer.seekTo(currentTime, true);
+      } else {
+        sendYtCommand("seekTo", [currentTime, true]);
       }
       updateDisplayTime();
     }
@@ -1527,10 +1609,10 @@
       scrubSpeedBtn.textContent = `${rate}x`;
       if (isHtmlVideo) {
         htmlVid.playbackRate = rate;
-      } else if (isYtReady) {
-        ytPlayer.setPlaybackRate(rate);
+      } else {
+        sendYtCommand("setPlaybackRate", [rate]);
       }
-      showToast(`Playback Speed: ${rate}x`);
+      showToast(`Speed: ${rate}x`);
     }
 
     scrubSpeedBtn.onclick = () => {
@@ -1549,9 +1631,9 @@
       if (isHtmlVideo) {
         htmlVid.volume = currentVolume / 100;
         htmlVid.muted = (currentVolume === 0);
-      } else if (isYtReady) {
-        ytPlayer.setVolume(currentVolume);
-        if (currentVolume === 0) ytPlayer.mute(); else ytPlayer.unMute();
+      } else {
+        sendYtCommand("setVolume", [currentVolume]);
+        if (currentVolume === 0) sendYtCommand("mute"); else sendYtCommand("unMute");
       }
     }
 
@@ -1570,11 +1652,11 @@
       isMuted = !isMuted;
       if (isMuted) {
         if (isHtmlVideo) htmlVid.muted = true;
-        else if (isYtReady) ytPlayer.mute();
+        else sendYtCommand("mute");
         showToast("Muted");
       } else {
         if (isHtmlVideo) htmlVid.muted = false;
-        else if (isYtReady) ytPlayer.unMute();
+        else sendYtCommand("unMute");
         showToast("Unmuted");
       }
     }
@@ -1611,13 +1693,11 @@
         isHtmlVideo = false;
         htmlVid.style.display = "none";
         htmlVid.pause();
-        ytContainer.style.display = "block";
-        if (ytPlayer && ytPlayer.loadVideoById) {
-          ytPlayer.loadVideoById(currentVideoId);
-        }
+        ytIframe.style.display = "block";
+        ytIframe.src = `https://www.youtube.com/embed/${currentVideoId}?enablejsapi=1&autoplay=1&mute=0&rel=0&playsinline=1`;
         document.getElementById("keyframeImg").src = `https://img.youtube.com/vi/${currentVideoId}/hqdefault.jpg`;
         closeModal("urlModal");
-        showToast("Loaded YouTube lecture");
+        showToast("Loaded lecture video");
       } else {
         alert("Please paste a valid YouTube URL or choose a local file.");
       }
@@ -1628,8 +1708,8 @@
       const file = e.target.files[0];
       if (file) {
         isHtmlVideo = true;
-        ytContainer.style.display = "none";
-        if (ytPlayer && ytPlayer.pauseVideo) ytPlayer.pauseVideo();
+        ytIframe.style.display = "none";
+        sendYtCommand("pauseVideo");
         htmlVid.style.display = "block";
         htmlVid.src = URL.createObjectURL(file);
         htmlVid.play();
@@ -1664,7 +1744,7 @@
         ctx.drawImage(htmlVid, 0, 0, canvas.width, canvas.height);
         imgSrc = canvas.toDataURL("image/jpeg", 0.85);
       } else {
-        imgSrc = `https://img.youtube.com/vi/${currentVideoId}/hqdefault.jpg`;
+        imgSrc = "assets/slide-exact.png";
       }
 
       const card = document.createElement("div");
@@ -1793,11 +1873,11 @@
 
     // Auto-Save in LocalStorage
     function saveNotes() {
-      localStorage.setItem("yrusika_focus_notes_v2", editor.innerHTML);
+      localStorage.setItem("yrusika_focus_notes_v3", editor.innerHTML);
     }
     editor.addEventListener("input", saveNotes);
     window.addEventListener("DOMContentLoaded", () => {
-      const saved = localStorage.getItem("yrusika_focus_notes_v2");
+      const saved = localStorage.getItem("yrusika_focus_notes_v3");
       if (saved) editor.innerHTML = saved;
     });
 
@@ -1857,18 +1937,28 @@
       showToast(isDark ? "Dark Mode" : "Light Mode");
     };
 
-    // Exit Video Mode
-    document.getElementById("exitVideoModeBtn").onclick = () => {
-      showToast("Exit Video Mode triggered");
-      if (document.fullscreenElement) document.exitFullscreen().catch(()=>{});
-    };
-    document.getElementById("topCloseBtn").onclick = () => {
-      showToast("Focus mode closed");
-    };
-    document.getElementById("closeDockBtn").onclick = () => {
-      const dock = document.getElementById("dockSection");
-      dock.style.display = (dock.style.display === "none") ? "flex" : "none";
-    };
+    // Unmute Helper
+    function unmuteVideo() {
+      sendYtCommand("unMute");
+      sendYtCommand("setVolume", [currentVolume || 80]);
+      const banner = document.getElementById("unmuteBanner");
+      if (banner) banner.style.display = "none";
+      showToast("Audio Unmuted");
+    }
+
+    // Exit Video Mode & Dock Collapse
+    const dockSection = document.getElementById("dockSection");
+    function toggleVideoMode() {
+      dockSection.classList.toggle("collapsed");
+      const isCollapsed = dockSection.classList.contains("collapsed");
+      const reopenBtn = document.getElementById("reopenDockBtn");
+      if (reopenBtn) reopenBtn.style.display = isCollapsed ? "flex" : "none";
+      showToast(isCollapsed ? "Exited Video Mode (Full Screen Video)" : "Restored Study Mode");
+    }
+
+    document.getElementById("exitVideoModeBtn").onclick = toggleVideoMode;
+    document.getElementById("closeDockBtn").onclick = toggleVideoMode;
+    document.getElementById("topCloseBtn").onclick = toggleVideoMode;
 
     // Keyboard Shortcuts
     window.addEventListener("keydown", (e) => {
