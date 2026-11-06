@@ -351,3 +351,4 @@ document.addEventListener("DOMContentLoaded", async () => {
   await loadNotes();
   await loadSettings();
 });
+
