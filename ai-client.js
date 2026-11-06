@@ -182,6 +182,77 @@ Analyze this video keyframe image carefully:
       text: `### Keyframe [${timestampStr}]\n- Visual scene change detected on video canvas.\n- Connect an AI provider in Settings to auto-generate markdown code and notes.`
     };
   }
+
+  async askQuestion(userPrompt, context = {}) {
+    await this.loadSettings();
+
+    const systemPrompt = `You are Yrusika AI, an expert pair-programming tutor and study assistant.
+Video Title: "${context.title || "Lecture"}"
+Current Video Position: ${context.currentTime || "00:00"}
+Recent Lecture Notes & Code Context:
+${context.notesText ? context.notesText.slice(-3000) : "No notes captured yet."}
+
+Answer the user's question clearly and concisely.
+If explaining code, provide clean syntax-highlighted code blocks.
+Use LaTeX math ($...$) for formulas.
+Keep answers helpful, direct, and zero emojis.`;
+
+    if (this.provider === "gemini") {
+      const key = this.geminiApiKey;
+      if (!key) {
+        return "Please add your free Google Gemini API key in extension Settings to use Yrusika AI.";
+      }
+      let modelName = this.geminiModel || "gemini-2.5-flash";
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${key}`;
+      const payload = {
+        contents: [
+          {
+            parts: [
+              { text: systemPrompt },
+              { text: `User Question: ${userPrompt}` }
+            ]
+          }
+        ],
+        generationConfig: {
+          temperature: 0.3,
+          maxOutputTokens: 1024
+        }
+      };
+
+      try {
+        const resp = await fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        if (!resp.ok) {
+          return `Gemini API returned error (${resp.status})`;
+        }
+        const json = await resp.json();
+        return json.candidates?.[0]?.content?.parts?.[0]?.text || "No response generated.";
+      } catch (err) {
+        return `Failed to connect to Gemini: ${err.message}`;
+      }
+    } else if (this.provider === "ollama") {
+      try {
+        const resp = await fetch(`${this.ollamaEndpoint}/api/generate`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            model: this.ollamaModel,
+            prompt: `${systemPrompt}\n\nUser Question: ${userPrompt}`,
+            stream: false
+          })
+        });
+        if (!resp.ok) return `Ollama returned status ${resp.status}`;
+        const json = await resp.json();
+        return json.response || "No response from local Ollama model.";
+      } catch (err) {
+        return `Could not connect to Ollama at ${this.ollamaEndpoint}.`;
+      }
+    }
+    return "No AI provider configured.";
+  }
 }
 
 window.AIClient = AIClient;

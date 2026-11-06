@@ -232,6 +232,16 @@
     }
   });
 
+  // Listen for messages from extension popup
+  if (typeof chrome !== "undefined" && chrome.runtime && chrome.runtime.onMessage) {
+    chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+      if (msg.action === "TOGGLE_PANEL") {
+        togglePanel();
+        sendResponse({ success: true, isOpen: isPanelOpen });
+      }
+    });
+  }
+
   // Re-check for video on URL changes (YouTube SPA navigation)
   let lastUrl = location.href;
   new MutationObserver(() => {

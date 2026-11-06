@@ -22,6 +22,7 @@
   },
   "action": {
     "default_title": "Yrusika — AI Video Note Taker",
+    "default_popup": "popup.html",
     "default_icon": {
       "16": "assets/icons/icon16.png",
       "48": "assets/icons/icon48.png",
@@ -56,6 +57,12 @@
         "panel.html",
         "panel.css",
         "panel.js",
+        "dashboard.html",
+        "dashboard.css",
+        "dashboard.js",
+        "popup.html",
+        "popup.css",
+        "popup.js",
         "themes.js",
         "vision-detector.js",
         "ai-client.js",

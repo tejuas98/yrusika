@@ -119,10 +119,49 @@ document.addEventListener("DOMContentLoaded", () => {
       text: aiResult.text
     });
 
+    // Persist note to storage for Yrusika Dashboard
+    persistNoteToStorage(noteTitleInput.value, videoInfo.url, notes);
+
     // Auto-save to Obsidian vault if linked
     if (directoryHandle) {
       saveToVault();
     }
+  }
+
+  async function persistNoteToStorage(title, url, noteItems) {
+    if (typeof chrome === "undefined" || !chrome.storage || !chrome.storage.local) return;
+    try {
+      const data = await chrome.storage.local.get(["yrusika_saved_notes", "yrusika_study_stats"]);
+      let savedNotes = data.yrusika_saved_notes || [];
+      let stats = data.yrusika_study_stats || { totalMinutes: 13, weekMinutes: 13, totalKeyframes: 0 };
+
+      const existingIndex = savedNotes.findIndex(n => n.url === url || n.title === title);
+      const fullMarkdown = noteItems.map(n => `### [${n.timestamp}]\n\n${n.text}`).join("\n\n---\n\n");
+      const firstThumbnail = noteItems.length > 0 ? noteItems[0].screenshot : "";
+
+      const noteObj = {
+        id: existingIndex >= 0 ? savedNotes[existingIndex].id : "note-" + Date.now(),
+        title: title || "Untitled Lecture",
+        url: url,
+        date: new Date().toLocaleDateString(),
+        keyframeCount: noteItems.length,
+        thumbnail: firstThumbnail,
+        content: fullMarkdown,
+        updatedAt: Date.now()
+      };
+
+      if (existingIndex >= 0) {
+        savedNotes[existingIndex] = noteObj;
+      } else {
+        savedNotes.unshift(noteObj);
+      }
+
+      stats.totalKeyframes = (stats.totalKeyframes || 0) + 1;
+      await chrome.storage.local.set({
+        yrusika_saved_notes: savedNotes,
+        yrusika_study_stats: stats
+      });
+    } catch(e) {}
   }
 
   // Simple Markdown Renderer
@@ -415,6 +454,85 @@ document.addEventListener("DOMContentLoaded", () => {
 
       paletteCardsList.appendChild(card);
     });
+  }
+
+  // AI Assistant Modal Wiring (Replaces proprietary Hovie with Free Gemini/Ollama)
+  const floatingAssistant = document.getElementById("floating-assistant");
+  const aiAssistantModal = document.getElementById("ai-assistant-modal");
+  const closeAiAssistant = document.getElementById("close-ai-assistant");
+  const aiChatMessages = document.getElementById("ai-chat-messages");
+  const aiChatInput = document.getElementById("ai-chat-input");
+  const aiChatSend = document.getElementById("ai-chat-send");
+  const aiPills = document.querySelectorAll(".ai-pill");
+
+  if (floatingAssistant && aiAssistantModal) {
+    floatingAssistant.addEventListener("click", () => {
+      aiAssistantModal.classList.toggle("hidden");
+      if (!aiAssistantModal.classList.contains("hidden") && aiChatInput) {
+        aiChatInput.focus();
+      }
+    });
+  }
+
+  if (closeAiAssistant && aiAssistantModal) {
+    closeAiAssistant.addEventListener("click", () => {
+      aiAssistantModal.classList.add("hidden");
+    });
+  }
+
+  aiPills.forEach((pill) => {
+    pill.addEventListener("click", () => {
+      const prompt = pill.getAttribute("data-prompt");
+      if (prompt) handleAiQuery(prompt);
+    });
+  });
+
+  if (aiChatSend && aiChatInput) {
+    aiChatSend.addEventListener("click", () => {
+      const q = aiChatInput.value.trim();
+      if (q) {
+        handleAiQuery(q);
+        aiChatInput.value = "";
+      }
+    });
+
+    aiChatInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        const q = aiChatInput.value.trim();
+        if (q) {
+          handleAiQuery(q);
+          aiChatInput.value = "";
+        }
+      }
+    });
+  }
+
+  async function handleAiQuery(question) {
+    if (!aiChatMessages) return;
+
+    // 1. User Message
+    const userMsg = document.createElement("div");
+    userMsg.className = "ai-msg user";
+    userMsg.textContent = question;
+    aiChatMessages.appendChild(userMsg);
+
+    // 2. Bot Thinking
+    const botMsg = document.createElement("div");
+    botMsg.className = "ai-msg bot";
+    botMsg.innerHTML = "<em>Analyzing lecture with Yrusika AI...</em>";
+    aiChatMessages.appendChild(botMsg);
+    aiChatMessages.scrollTop = aiChatMessages.scrollHeight;
+
+    // 3. Query AI Client
+    const context = {
+      title: noteTitleInput ? noteTitleInput.value : "Lecture",
+      currentTime: videoInfo ? videoInfo.currentTime : 0,
+      notesText: notes.map((n) => `[${n.timestamp}]: ${n.text}`).join("\n")
+    };
+
+    const reply = await aiClient.askQuestion(question, context);
+    botMsg.innerHTML = renderSimpleMarkdown(reply);
+    aiChatMessages.scrollTop = aiChatMessages.scrollHeight;
   }
 
   initThemeSystem();
