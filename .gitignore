@@ -14,3 +14,10 @@ Thumbs.db
 # Local secrets and overrides
 *.local
 
+# Build, video and render outputs
+brag-output/
+*.mp4
+*.webm
+work/
+
+

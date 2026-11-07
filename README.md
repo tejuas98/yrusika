@@ -1,306 +1,294 @@
-# Yrusika — Open-Source AI Video Note Taker (Chrome Extension)
+# Yrusika: Open-Source AI Video Note-Taking Workstation (Chromium Extension)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Open Source](https://img.shields.io/badge/Open%20Source-100%25-brightgreen.svg)](https://github.com/tejuas98/yrusika)
 [![Platform](https://img.shields.io/badge/Platform-Chrome%20%7C%20Edge%20%7C%20Brave%20%7C%20Arc-orange.svg)](https://github.com/tejuas98/yrusika)
+[![Manifest](https://img.shields.io/badge/Manifest-V3-success.svg)](manifest.json)
 
-**Yrusika** is a 100% free, open-source AI video note-taking workstation and visual transcriber built specifically as a **Chromium extension** (Google Chrome, Brave, Arc, Microsoft Edge). It docks directly alongside YouTube, Coursera, Udemy, and any web video player, runs real-time computer-vision scene detection, captures high-resolution lecture slides and code keyframes, and streams structured, timestamped Markdown directly into your local Obsidian vault or files.
+Yrusika is an open-source, client-side video note-taking workstation and visual transcriber built as a Chromium browser extension (Google Chrome, Brave, Arc, Microsoft Edge). It docks directly alongside HTML5 video players (YouTube, Coursera, Udemy), detects slide changes and code keyframes via client-side computer vision, and streams structured, timestamped Markdown notes directly into your local Obsidian vault or file system.
 
-Zero subscriptions, zero paywalls, zero vendor tracking. Bring your own free Google Gemini API key or run completely offline with local Ollama models.
+All processing occurs client-side. There are zero subscriptions, zero telemetry, zero intermediate servers, and zero vendor lock-in.
 
 ---
 
 ## Table of Contents
 
-- [Why Yrusika?](#why-yrusika)
-- [Complete Feature Breakdown](#complete-feature-breakdown)
-  - [1. Focus Mode & Split-Screen Dock](#1-focus-mode--split-screen-dock)
-  - [2. Comprehensive Video Mode Settings](#2-comprehensive-video-mode-settings)
-  - [3. In-Video Controller Bar](#3-in-video-controller-bar)
-  - [4. Dock Footer Action Toolbar](#4-dock-footer-action-toolbar)
-  - [5. Obsidian Vault & Local File System Sync](#5-obsidian-vault--local-file-system-sync)
-  - [6. Rich Markdown Editor & Slash Commands](#6-rich-markdown-editor--slash-commands)
-  - [7. Interactive Video Transcripts & Seeking](#7-interactive-video-transcripts--seeking)
-  - [8. YouTube Ad Intelligence](#8-youtube-ad-intelligence)
-  - [9. Keyboard Shortcuts](#9-keyboard-shortcuts)
-- [Architecture & Flow](#architecture--flow)
-- [Installation Guide](#installation-guide)
-- [How to Use (Step-by-Step)](#how-to-use-step-by-step)
-- [Configuration & API Setup](#configuration--api-setup)
-- [Feature Comparison](#feature-comparison)
-- [Contributing](#contributing)
+- [System Architecture](#system-architecture)
+  - [Component Architecture](#component-architecture)
+  - [Runtime Data Flow](#runtime-data-flow)
+- [Technical Breakdown of Working](#technical-breakdown-of-working)
+  - [1. DOM Interception and Shadow DOM Isolation](#1-dom-interception-and-shadow-dom-isolation)
+  - [2. Computer-Vision Keyframe and Scene Detection Pipeline](#2-computer-vision-keyframe-and-scene-detection-pipeline)
+  - [3. Offscreen Document Processing](#3-offscreen-document-processing)
+  - [4. Direct AI Inference and Streaming Pipeline (BYOK)](#4-direct-ai-inference-and-streaming-pipeline-byok)
+  - [5. Storage Engine and Direct Obsidian Vault Sync](#5-storage-engine-and-direct-obsidian-vault-sync)
+  - [6. In-Video Controller and Player Telemetry](#6-in-video-controller-and-player-telemetry)
+- [Tech Stack](#tech-stack)
+- [Codebase Anatomy](#codebase-anatomy)
+- [Installation and Developer Setup](#installation-and-developer-setup)
+- [Configuration and API Setup](#configuration-and-api-setup)
+- [Keyboard Shortcuts](#keyboard-shortcuts)
+- [Security and Privacy Model](#security-and-privacy-model)
 - [License](#license)
 
 ---
 
-## Why Yrusika?
+## System Architecture
 
-Commercial video note-taking extensions gate their best features behind monthly subscriptions, cap your study time with artificial 20-minute daily limits, inject promotional upsells, and send your personal notes through proprietary servers.
-
-**Yrusika eliminates all commercial ties:**
-* **Free & Open Source:** Licensed under MIT with zero subscription gates.
-* **Unlimited Video Watching:** Watch multi-hour lectures without hitches or usage locks.
-* **Direct AI Connection (BYOK):** Connect directly to Google Gemini 2.5 Flash using your free Google AI Studio key (1,500 free requests per day), or run 100% offline using local Ollama vision models.
-* **Local Privacy First:** Your notes, screenshots, and study sessions stay on your computer or in your local Obsidian vault.
-
----
-
-## Complete Feature Breakdown
-
-### 1. Focus Mode & Split-Screen Dock
-* **Automatic Split-Screen:** Docks side-by-side with the active video player without overlapping video controls or hiding timestamps.
-* **Multi-Platform Support:** Works natively on YouTube, Coursera, Udemy, Bilibili, Netflix, Facebook Video, and any HTML5 `<video>` element on the web.
-* **Adjustable Ratio:** Drag or toggle between split-screen ratios to give more space to the lecture video or your notes dock.
-* **Clean Dark & Light Theme:** One-click theme toggle (Moon / Sun icon) designed for late-night study sessions with high-contrast text readability.
-* **Exit Video Mode:** Quick one-click `Exit Video Mode` button or `Esc` key to restore native browser layout instantly.
-
----
-
-### 2. Comprehensive Video Mode Settings
-Accessible via the **Gear Icon** in the note dock or the extension options page:
-
-#### AI Notes Settings
-* **Multilingual AI Output:** Choose the output language for generated notes (English, Spanish, French, German, Japanese, Chinese, Russian, Hindi, Portuguese, and more).
-* **Custom AI Prompt:** Provide system instructions to guide note structure (e.g., "Summarize in bullet points with code snippets", "Explain like I'm a beginner", or "Focus heavily on architectural design choices").
-* **Prompt Library:** Save, edit, tag, and organize custom prompts for different subjects (Computer Science, Mathematics, Biology, Economics). Set any prompt as the **Default** to auto-apply whenever you start a lecture.
-* **Automatic Mermaid Diagram Generation:** When enabled, the AI converts process workflows, database schemas, and system relationships into live interactive Mermaid.js diagrams directly within your notes.
-* **Automatic Screenshot Keyframe Insertion:** Automatically captures and embeds high-resolution video frames at critical scene changes (slide transitions, terminal executions, board drawings).
-* **Burned Timestamp Badges:** Automatically attaches clickable timestamp badges (e.g., `[14:20]`) to note sections so you can re-watch specific moments with one click.
-* **Audio-Only Mode:** Optimized mode for podcasts, interviews, and talking-head lectures that transcribes speech without wasting processing on static visuals.
-* **Continuous Background Watching:** Keeps capturing and transcribing notes even when the video tab is unfocused or running in the background.
-
-#### Default Note Tags & Frontmatter
-* **Include Project Tag:** Automatically adds `#yrusika` to every new note.
-* **Include Website Domain Tag:** Automatically tags notes by platform (e.g., `#youtube`, `#udemy`, `#coursera`, `#local-video`).
-* **Custom Default Tags:** Add permanent user-defined tags across your whole knowledge base (e.g., `#learning`, `#lecture`, `#engineering`).
-* **Interactive Metadata Properties:** Generates YAML frontmatter with title, source video URL, video ID, creation date, and lecture duration.
-
----
-
-### 3. In-Video Controller Bar
-A floating controller bar positioned above the video with instant hotkeys:
-
-| Control Button | Action | Shortcut |
-| :--- | :--- | :--- |
-| **Close (`X`)** | Closes the floating bar | — |
-| **Hide (`Eye`)** | Toggles controller visibility | `V` |
-| **Turtle Icon** | Drops video playback to slow speed (`0.8x`) | — |
-| **Lightning Icon**| Bumps playback to fast study speed (`1.5x`) | — |
-| **Seek Start (`|<`)** | Jumps video to beginning (`0:00`) | — |
-| **Rewind (`<<`)** | Rewinds video by 10 seconds | `Z` |
-| **Advance (`>>`)** | Skips video forward by 10 seconds | `X` |
-| **Seek End (`>|`)** | Jumps to video end | — |
-| **Volume & Mute** | Quick volume slider and instant mute toggle | — |
-| **Reset Speed** | Restores normal 1.0x playback speed | `R` |
-| **Preferred Speed**| Jumps to user's saved study speed (`1.8x`) | `G` |
-| **Feedback** | Opens Yrusika open-source GitHub issues directly | — |
-
----
-
-### 4. Dock Footer Action Toolbar
-Located at the bottom of the Yrusika note-taking dock:
-
-* **Expand / Fullscreen (`⛶`):** Maximizes the video and note dock area to fill your entire display.
-* **Video Mode Settings (`⚙`):** Opens the Video Mode Settings modal instantly without leaving the video.
-* **Timestamp Badge (`🕒`):** Inserts the exact current video timestamp as a clickable badge at your cursor position in the editor.
-* **Camera Frame Snapshot (`📷`):** Grabs a high-definition screenshot of the current video frame and embeds it into the note with a click-to-seek timestamp.
-* **Audio Recorder (`● Mic`):** Records system or microphone audio clips directly into your note for voice memos and spoken lecture snippets.
-* **Transcription Language (`EN ▾`):** Switch input speech recognition language on the fly.
-* **Live Translate (`文A EN ▾`):** Real-time bilingual translation of audio and subtitles for international lectures.
-
----
-
-### 5. Obsidian Vault & Local File System Sync
-* **Zero Vendor Lock-In:** Notes are written directly to standard Markdown (`.md`) files on your computer.
-* **Native Obsidian Vault Linking:** Connect your Obsidian vault folder using the modern File System Access API.
-* **Image Attachments Folder:** High-res lecture screenshots are saved directly into your vault's attachment directory and linked with relative paths (`![[Pasted Image.png]]` or standard markdown `![]()`).
-* **Local Bridge Mode:** Works with local Obsidian desktop plugins for bidirectional communication.
-* **Live Vault Status Indicator:** Green indicator (`● Vault: <vault-name>`) confirms active connection and real-time syncing.
-
----
-
-### 6. Rich Markdown Editor & Slash Commands
-The embedded note editor supports complete GitHub Flavored Markdown:
-
-* **Slash Commands (`/`):** Type `/` on any new line to open the quick-insert menu:
-  * Headings (`/h1`, `/h2`, `/h3`)
-  * Bulleted Lists (`/bullet`) and Numbered Lists (`/number`)
-  * Task Checklists (`/todo` or `[ ]`)
-  * Callouts and Blockquotes (`/quote`)
-  * Fenced Code Blocks (`/code`) with language syntax highlighting
-  * Math Equations (`/math`) with KaTeX rendering
-  * Tables (`/table`) and Dividers (`/divider`)
-  * Mermaid Diagrams (`/mermaid`)
-* **Live In-Editor Playback Bar:** Floating scrub bar right below your note text with 1x speed, undo, play/pause, redo, and volume control.
-
----
-
-### 7. Interactive Video Transcripts & Seeking
-* **Dual Tab Interface:** Toggle seamlessly between **Notes** mode and **Transcript** mode.
-* **Synchronized Speech Transcript:** Follows lecture audio in real time with line-by-line speaker breakdown.
-* **Interactive Seeking:** Click on any sentence in the transcript to jump the video directly to that phrase.
-* **Transcript Search:** Search keywords across long 4-hour lectures to locate specific explanations instantly.
-
----
-
-### 8. YouTube Ad Intelligence
-* **Auto-Skip Ads:** Automatically detects and triggers the "Skip Ad" button as soon as it appears.
-* **Auto-Mute Ads:** Mutes audio during mid-roll advertisements.
-* **16x Speed-Up:** Accelerates non-skippable ads to 16x speed so they complete in seconds.
-* **Capture Guard:** Pauses AI scene capture and note generation when an advertisement starts, and cleanly resumes once the lecture content returns.
-
----
-
-### 9. Keyboard Shortcuts
-
-| Shortcut | Function |
-| :--- | :--- |
-| `D` | Increase playback speed (+0.1x) |
-| `S` | Decrease playback speed (-0.1x) |
-| `R` | Reset speed to default `1.0x` |
-| `G` | Jump to preferred high-speed mode (`1.8x`) |
-| `Z` | Rewind 10 seconds |
-| `X` | Advance 10 seconds |
-| `V` | Show / hide the floating video controller |
-| `/` | Open Markdown slash commands inside note editor |
-| `Esc` | Exit Video Mode |
-
-*(All shortcut keys can be customized in the extension settings page).*
-
----
-
-## Ecosystem & Architecture
-
-<p align="center">
-  <img src="assets/flowchart.png" alt="Yrusika Ecosystem Architecture" width="100%" />
-</p>
-
-### Pipeline Architecture
+### Component Architecture
 
 ```mermaid
 flowchart TD
-    Video["HTML5 Video Player (YouTube / Coursera / Udemy)"] --> Canvas["Canvas Keyframe Capture (10 FPS)"]
-    Canvas --> Diff["Quadrant Edge-Difference Detector"]
-    Diff -->|"Significant Scene Change"| Snap["High-Res Keyframe + Timestamp"]
+    subgraph Host["Host Web Page (e.g. YouTube / Coursera)"]
+        HTML5Video["HTML5 Video Element"]
+        PageDOM["Host Page DOM Tree"]
+    end
+
+    subgraph ContentLayer["Injected Content Layer"]
+        HoverButton["Video Hover Controller (video-hover-button.js)"]
+        ShadowRoot["Isolated Shadow DOM Root (#hovernotes-root)"]
+        NoteEditor["Split-Screen Note Workstation (content-script.js)"]
+        HoverButton --> ShadowRoot
+        NoteEditor --> ShadowRoot
+    end
+
+    subgraph ExtensionCore["Chromium Extension Runtime (MV3)"]
+        ServiceWorker["Background Service Worker (background.js)"]
+        OffscreenDoc["Offscreen Document (offscreen.html / offscreen.js)"]
+        CanvasProcessor["Offscreen Canvas (Frame & Edge Analysis)"]
+        AudioBuffer["Web Audio Context (Speech & Subtitles)"]
+        
+        ServiceWorker <--> OffscreenDoc
+        OffscreenDoc --> CanvasProcessor
+        OffscreenDoc --> AudioBuffer
+    end
+
+    subgraph ExternalServices["External Providers & Storage"]
+        GeminiAPI["Google Gemini Flash API (BYOK via HTTPS)"]
+        LocalOllama["Local Ollama Instance (localhost:11434)"]
+        FileSystem["File System Access API v2 (Direct Disk Handle)"]
+        ObsidianVault["Local Obsidian Vault (.md files & attachments)"]
+    end
+
+    HTML5Video -->|"DOM Mutation & Event Listeners"| HoverButton
+    HTML5Video -->|"Frame Buffer Transfer"| OffscreenDoc
+    ContentLayer <-->|"chrome.runtime.sendMessage"| ServiceWorker
+    ServiceWorker -->|"REST Streaming"| GeminiAPI
+    ServiceWorker -->|"REST Streaming"| LocalOllama
+    NoteEditor -->|"Direct Write via FileSystemHandle"| FileSystem
+    FileSystem --> ObsidianVault
+```
+
+### Runtime Data Flow
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor User
+    participant Video as HTML5 Video Player
+    participant CS as Content Script (Shadow DOM)
+    participant SW as Service Worker (Background)
+    participant OD as Offscreen Document
+    participant AI as AI Engine (Gemini / Ollama)
+    participant FS as Local File System (Obsidian)
+
+    User->>Video: Play technical lecture / tutorial
+    CS->>Video: Intercept video node and attach playhead monitors
+    CS->>CS: Inject split-screen dock and hover controller into Shadow DOM
     
-    Video --> AudioStream["Audio Track / Subtitles"]
-    AudioStream --> SpeechEngine["Speech-to-Text & Transcriber"]
-    
-    Snap --> AIOrchestrator{"AI Provider"}
-    SpeechEngine --> AIOrchestrator
-    
-    AIOrchestrator -->|"Free Cloud"| Gemini["Google Gemini 2.5 Flash"]
-    AIOrchestrator -->|"Offline / Private"| Ollama["Local Ollama (Vision LLM)"]
-    
-    Gemini --> Formatter["Markdown Stream Formatter"]
-    Ollama --> Formatter
-    
-    Formatter --> Editor["Yrusika Video Dock Editor"]
-    Editor -->|"Direct File System Sync"| Obsidian["Local Obsidian Vault (.md + images)"]
+    loop Every 500ms (Video Active)
+        OD->>Video: Sample video frame into HTMLCanvasElement
+        OD->>OD: Compute perceptual edge differences across frame quadrants
+        alt Scene / Slide Transition Detected
+            OD->>CS: Dispatch KeyframeCaptured event with timestamp
+            CS->>CS: Embed high-resolution snapshot thumbnail into note stream
+            CS->>SW: Request structured AI synthesis (prompt + transcript + frame)
+            SW->>AI: Stream inference request (BYOK Gemini or Ollama)
+            AI-->>SW: Stream Markdown chunks
+            SW-->>CS: Progressive stream updates to editor
+            CS->>FS: Write Markdown and assets to local Obsidian directory handle
+        end
+    end
+
+    User->>CS: Click timestamp link (e.g. 02:23)
+    CS->>Video: Set video.currentTime = 143.0 and resume playback
 ```
 
 ---
 
-## Installation Guide
+## Technical Breakdown of Working
+
+### 1. DOM Interception and Shadow DOM Isolation
+
+Web applications like YouTube, Udemy, and Coursera employ complex CSS styling and strict stacking contexts that interfere with standard injected browser extension UI. Yrusika solves this using an isolated Web Components architecture:
+
+* **Shadow DOM Encapsulation:** The note-taking sidebar and floating action buttons are mounted under a closed Shadow Root (`#hovernotes-root`). Host page stylesheets cannot bleed into the extension, and Yrusika's CSS rules (`hn-shadow.css`) cannot distort host page styling.
+* **Layout Rebalancing (Split-Screen):** When Focus Mode is toggled, `content-script.js` dynamically modifies the layout container of the host page (such as `#primary`, `#player-container-outer`, or `#player-theater-container` on YouTube). The video element is contracted to an optimal viewing width (typically 60-65%), while the Yrusika workstation docks directly into the remaining horizontal space (35-40%).
+* **Fullscreen Awareness:** The extension hooks into the `fullscreenchange` and `webkitfullscreenchange` browser APIs to seamlessly toggle between embedded dock mode and native cinema mode without losing note state.
+
+### 2. Computer-Vision Keyframe and Scene Detection Pipeline
+
+Rather than relying on manual user screenshots, Yrusika executes client-side computer-vision scene change detection:
+
+1. **Frame Capture Sampling:** Video playhead frames are sampled into an internal `HTMLCanvasElement` at regular intervals (1 to 2 frames per second when seeking, 0.5 FPS during playback).
+2. **Quadrant Edge Analysis:** The canvas frame is downscaled to a normalized matrix (e.g., 320x180) to minimize CPU overhead. The frame is subdivided into 4 quadrants.
+3. **Difference Thresholding:** A luminosity and color difference coefficient is computed between successive frames:
+   $$D = \frac{1}{N} \sum_{i=1}^{N} |P_{t}(i) - P_{t-1}(i)|$$
+   If $D$ exceeds the adaptive sensitivity threshold (accounting for video noise and minor speaker motion while picking up slide transitions, diagram draws, or code editor changes), a **Keyframe Trigger** is dispatched.
+4. **Timestamp Anchoring:** The captured image is immediately tagged with the exact `video.currentTime` and embedded into the live Markdown session.
+
+### 3. Offscreen Document Processing
+
+Manifest V3 disallows background service workers from accessing the DOM, creating `<canvas>` elements, or managing raw `AudioContext` buffers. Yrusika implements the Chromium `chrome.offscreen` API:
+
+* `background.js` checks for an active offscreen document via `chrome.offscreen.hasDocument()`.
+* If absent, it spawns `offscreen.html` with reason `BLOBS` and `USER_MEDIA`.
+* Heavy computational tasks (such as image encoding, WebP compression, transcript alignment, and audio buffer analysis) are offloaded to `offscreen.js`, preventing any frame drops or UI thread latency on the host video page.
+
+### 4. Direct AI Inference and Streaming Pipeline (BYOK)
+
+Yrusika functions entirely on a **Bring Your Own Key (BYOK)** model:
+
+* **Google Gemini Integration:** Connects directly to the Google AI Studio Gemini API (`gemini-2.5-flash` or `gemini-1.5-pro`). Users provide their free API key (which includes 1,500 free requests per day). Requests are dispatched via standard `fetch()` using the `streamGenerateContent` endpoint.
+* **Local Ollama Integration:** For air-gapped, privacy-sensitive, or offline study sessions, Yrusika connects to a local Ollama server (`http://localhost:11434/api/generate`). It transmits visual keyframes and audio transcript prompts directly to locally hosted vision-language models (such as `llava`, `llama3.2-vision`, or `mistral`).
+* **Progressive Markdown Rendering:** The response stream is piped directly into the note workstation editor, allowing users to read notes as they are generated without waiting for multi-paragraph completions.
+
+### 5. Storage Engine and Direct Obsidian Vault Sync
+
+Yrusika bypasses third-party cloud sync by interacting directly with the user's local file system:
+
+* **File System Access API v2:** Utilizing `showDirectoryPicker()`, users grant Yrusika read/write access to their Obsidian vault directory. The returned `FileSystemDirectoryHandle` is stored persistently in `indexedDB`.
+* **Zero-Intermediary Saving:** Whenever a note is generated or edited, `local-file-system-v2.js` and `file-registry.js` write the Markdown file directly to `<Vault>/Yrusika/<Video-Title>.md`, while saving keyframe images to `<Vault>/Yrusika/assets/<timestamp>.webp`.
+* **Obsidian URI Fallback:** If the browser or environment restricts direct file system handles, Yrusika falls back to the native Obsidian URI protocol handler:
+  `obsidian://new?vault=MyVault&name=LectureNotes&content=...`
+  This guarantees compatibility across various configurations.
+
+### 6. In-Video Controller and Player Telemetry
+
+A floating controller HUD is rendered over the video player (`video-hover-button.js`):
+
+* **Playback Speed Regulation:** One-click shortcuts for slow study (`0.8x`), standard (`1.0x`), study burst (`1.5x`), and user-defined high speed (`1.8x` to `2.5x`).
+* **Frame Step Seeking:** Frame-accurate stepping using keyboard shortcuts (`Z` for -10s, `X` for +10s) and direct playhead scrub triggers.
+* **YouTube Ad Intelligence:** Monitors player state transitions to prevent keyframe capture during pre-roll and mid-roll commercials, resuming note capture only when actual lecture content plays.
+
+---
+
+## Tech Stack
+
+| Layer | Technologies and Libraries |
+| :--- | :--- |
+| **Extension Platform** | Chromium Manifest V3 (Chrome 116+, Brave, Arc, Microsoft Edge) |
+| **Frontend Architecture** | Vanilla ES6+ TypeScript/JavaScript, Web Components, Shadow DOM |
+| **Styling & Isolation** | Scoped CSS (`hn-inject.css`, `hn-shadow.css`), CSS Custom Properties |
+| **Extension APIs** | `chrome.tabs`, `chrome.runtime`, `chrome.offscreen`, `chrome.storage.local`, `chrome.contextMenus` |
+| **Graphics & Vision** | HTML5 Canvas 2D Context, WebCodecs API, Perceptual Quadrant Hashing |
+| **Storage & I/O** | File System Access API v2 (`FileSystemHandle`), IndexedDB, `chrome.storage.sync` |
+| **AI Integration** | Google Gemini REST API (Server-Sent Events streaming), Ollama Native REST API |
+| **External Integration**| Obsidian URI Protocol (`obsidian://`), Markdown Serialization |
+| **Internationalization**| Native Chromium `_locales` subsystem (58 language packs supported) |
+
+---
+
+## Codebase Anatomy
+
+```
+yrusika/
+├── manifest.json              # Extension Manifest V3 metadata, host permissions, and scripts
+├── background.js              # Service Worker: tab events, offscreen management, proxy calls
+├── content-script.js          # Core injected script: viewport splitting, note editor, UI orchestrator
+├── video-hover-button.js      # In-player floating HUD: speed control, playhead tracking, quick actions
+├── offscreen.html             # Offscreen DOM host container for background processing
+├── offscreen.js               # Offscreen worker: canvas frame extraction, edge detection, audio buffer
+├── local-file-system-v2.js    # File System Access API v2 manager: directory handles and file writes
+├── file-registry.js           # File handle cache, duplicate prevention, and asset registration
+├── save-to-obsidian.js        # Obsidian URI protocol builder and Markdown export generator
+├── browser-polyfill.min.js    # Cross-browser WebExtensions API compatibility layer
+├── hover-notes-utils.js       # Shared utility helpers (debouncing, timestamp formatters, sanitize)
+├── unlock-pro.js              # Feature registry ensuring 100% features remain unlocked and free
+├── string-utils.js            # Text manipulation and Markdown formatting helpers
+├── hn-inject.css              # Host-page styles for viewport resizing and dock placement
+├── hn-shadow.css              # Isolated styles applied inside the Shadow DOM component tree
+├── options.html               # Extension settings interface (AI prompts, shortcuts, themes)
+├── options.js                 # Settings controller and API key storage logic
+├── options.css                # Styling for the options and configuration page
+├── popup.html                 # Browser toolbar action popup
+├── popup.js                   # Popup interactions and quick-launch trigger
+├── popup.css                  # Toolbar popup styling
+├── _locales/                  # 58 language localization directories (en, es, zh, ja, de, etc.)
+└── assets/                    # Icons, robot mascot badges, and architecture diagrams
+```
+
+---
+
+## Installation and Developer Setup
 
 ### Prerequisites
 * Any Chromium-based browser (Google Chrome, Brave, Arc, Microsoft Edge).
-* A free [Google AI Studio API Key](https://aistudio.google.com/) (recommended) OR [Ollama](https://ollama.ai/) running locally.
+* A free [Google AI Studio API Key](https://aistudio.google.com/) or local [Ollama](https://ollama.ai/).
 
-### Steps
+### Manual Developer Installation
 
 1. **Clone the repository:**
    ```bash
    git clone https://github.com/tejuas98/yrusika.git
    ```
 
-2. **Open Extensions Manager in Chrome:**
-   * Navigate to `chrome://extensions/` in your browser.
-   * Toggle **Developer mode** in the top-right corner.
-
-3. **Load Unpacked Extension:**
-   * Click the **Load unpacked** button in the top-left toolbar.
-   * Select the folder containing `yrusika` (or `hovernotes-unlocked`).
-   * **Yrusika** will now appear in your active extensions list.
-
-4. **Pin the Extension:**
-   * Click the puzzle icon in Chrome's toolbar and pin **Yrusika** for quick access.
-
----
-
-## How to Use (Step-by-Step)
-
-### Step 1: Open a Video
-Navigate to any video on YouTube (for example, a technical tutorial, programming course, or university lecture).
-
-### Step 2: Launch Video Mode
-* Click the blue **Yrusika** floating button on the video player, or click the extension icon in your toolbar and choose **Toggle NotePad**.
-* The video player smoothly resizes into focus mode, and the Yrusika note workstation docks on the right.
-
-### Step 3: Connect Your Vault (Optional but Recommended)
-* Click **• Vault: notes** at the top of the editor.
-* Select your local Obsidian vault directory or any notes folder on your hard drive.
-* Yrusika will now write notes directly into your folder as clean `.md` files.
-
-### Step 4: Take Notes (Automated or Manual)
-* **Automated AI Notes:** Click the record button `[ ● EN ▾ ]` in the dock footer. Yrusika will watch the lecture, capture visual slides, and stream formatted notes automatically.
-* **Manual Snapshot:** Click the Camera icon `[ 📷 ]` whenever an important slide or code snippet appears to instantly capture it with a timestamp badge.
-* **Timestamp Insertion:** Click the Clock icon `[ 🕒 ]` to drop a clickable timestamp badge into your text.
-
-### Step 5: Export and Review
-* All notes are saved automatically in real time.
-* Click the export menu to download your completed study material as **Markdown (.md)**, **PDF**, or plain text.
-
----
-
-## Configuration & API Setup
-
-Open **Yrusika Settings** by clicking the gear icon on the extension popup:
-
-### Using Google Gemini (Free Cloud)
-1. Visit [Google AI Studio](https://aistudio.google.com/) and click **Get API key**.
-2. Create a free API key (includes 15 requests per minute and up to 1,500 requests per day at zero charge).
-3. Paste the key into Yrusika Settings under **Gemini API Key**.
-4. Select `gemini-2.5-flash` for the fastest, most accurate multimodal transcription.
-
-### Using Ollama (100% Offline & Private)
-1. Install [Ollama](https://ollama.ai/) on your machine.
-2. Pull a multimodal vision model:
-   ```bash
-   ollama pull llama3.2-vision
+2. **Open Extensions Manager:**
+   In your Chromium browser, navigate to:
    ```
-3. Set provider to **Ollama** in Yrusika Settings with endpoint `http://localhost:11434`.
+   chrome://extensions/
+   ```
+
+3. **Enable Developer Mode:**
+   Toggle the **Developer mode** switch in the top-right corner.
+
+4. **Load the Extension:**
+   * Click **Load unpacked** in the top-left toolbar.
+   * Select the root `/yrusika` directory containing `manifest.json`.
+
+5. **Verify Installation:**
+   Yrusika will appear in your extension list. Pin it to your browser toolbar for quick access.
 
 ---
 
-## Feature Comparison
+## Configuration and API Setup
 
-| Feature | Proprietary Commercial Extensions | Yrusika (Open Source) |
-| :--- | :--- | :--- |
-| **Price** | $12–$20 / month subscription | **100% Free Forever (MIT)** |
-| **Usage Limits** | 20 minutes free trial quota | **Unlimited (Free Gemini tier or local Ollama)** |
-| **AI Privacy** | Sent to third-party vendor servers | **Direct to Google AI Studio or 100% Offline** |
-| **Obsidian Vault Linking** | Cloud-synced proprietary vault | **Direct local `.md` file system access** |
-| **Mid-Roll Ad Intelligence** | None or inconsistent | **Auto-Skip, Auto-Mute, 16x Ad Acceleration** |
-| **Mermaid Diagram Generation** | Paywalled feature | **Included out of the box** |
-| **Prompt Library** | Restricted or paywalled | **Full custom prompt library with defaults** |
-| **Telemetry & Tracking** | Embedded user analytics | **Zero telemetry, zero tracking pings** |
-| **Telemetry Removal** | Closed source | **Completely stripped of commercial ties** |
+1. Click the **Yrusika** icon in your browser toolbar or right-click the extension and select **Options**.
+2. **AI Provider Configuration:**
+   * **Google Gemini (Recommended):** Paste your free API key from Google AI Studio. Gemini 2.5 Flash is selected by default for rapid multi-modal inference.
+   * **Local Ollama:** Select the Ollama provider option, ensure Ollama is running (`ollama run llama3.2-vision`), and verify the endpoint (`http://localhost:11434`).
+3. **Obsidian Vault Binding:**
+   * In the Yrusika sidebar, click the **Vault** indicator.
+   * Select your local Obsidian vault folder using the native directory picker.
+   * Grant write permissions so notes and frame captures save directly to disk.
 
 ---
 
-## Contributing
+## Keyboard Shortcuts
 
-Yrusika is an open-source community effort. Contributions, bug reports, and suggestions are welcome!
+| Shortcut Key | Action |
+| :--- | :--- |
+| `R` | Reset video playback speed to `1.0x` |
+| `G` | Jump to preferred study speed (`1.8x`) |
+| `Z` | Rewind video by 10 seconds |
+| `X` | Fast-forward video by 10 seconds |
+| `V` | Toggle floating in-video controller bar visibility |
+| `/` | Open Markdown slash commands inside note editor |
+| `Esc` | Exit Video Mode and restore standard browser layout |
 
-1. Fork the repository: `https://github.com/tejuas98/yrusika`
-2. Create your feature branch: `git checkout -b feature/MyFeature`
-3. Commit your changes: `git commit -m 'Add MyFeature'`
-4. Push to your branch: `git push origin feature/MyFeature`
-5. Open a Pull Request on GitHub.
+*(All shortcut keys can be customized in the extension settings page).*
+
+---
+
+## Security and Privacy Model
+
+* **Zero Tracking:** Yrusika contains no tracking pixels, analytics scripts, or remote telemetry probes.
+* **Direct Connections Only:** AI requests originate directly from your browser to Google AI Studio or your local Ollama port. No proxy servers exist between your browser and your AI model.
+* **Local Data Sovereignty:** Notes, transcripts, and captured images are written directly to your local file system or local browser storage (`chrome.storage.local`).
+* **Source Transparency:** All extension source code is human-readable, unminified JavaScript licensed under MIT.
 
 ---
 
 ## License
 
-This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) file for full details.
+This project is licensed under the [MIT License](LICENSE) — free for personal, educational, and commercial use.
