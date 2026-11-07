@@ -9,6 +9,10 @@ Yrusika is an open-source, client-side video note-taking workstation and visual 
 
 All processing occurs client-side. There are zero subscriptions, zero telemetry, zero intermediate servers, and zero vendor lock-in.
 
+<p align="center">
+  <img src="assets/demo.gif" width="850" alt="Yrusika live running workstation demo in Google Chrome with auto-zoom and cursor smoothing" />
+</p>
+
 ---
 
 ## Table of Contents
@@ -35,6 +39,10 @@ All processing occurs client-side. There are zero subscriptions, zero telemetry,
 ---
 
 ## System Architecture
+
+<p align="center">
+  <img src="assets/screenshot-workstation-rounded.png" width="850" alt="Yrusika Split-Screen Workstation running in Google Chrome" />
+</p>
 
 ### Component Architecture
 
@@ -121,6 +129,10 @@ sequenceDiagram
 
 ### 1. DOM Interception and Shadow DOM Isolation
 
+<p align="center">
+  <img src="assets/screenshot-docked-notes-rounded.png" width="600" alt="Yrusika Docked Visual Note Workstation" />
+</p>
+
 Web applications like YouTube, Udemy, and Coursera employ complex CSS styling and strict stacking contexts that interfere with standard injected browser extension UI. Yrusika solves this using an isolated Web Components architecture:
 
 * **Shadow DOM Encapsulation:** The note-taking sidebar and floating action buttons are mounted under a closed Shadow Root (`#hovernotes-root`). Host page stylesheets cannot bleed into the extension, and Yrusika's CSS rules (`hn-shadow.css`) cannot distort host page styling.
@@ -165,6 +177,10 @@ Yrusika bypasses third-party cloud sync by interacting directly with the user's 
   This guarantees compatibility across various configurations.
 
 ### 6. In-Video Controller and Player Telemetry
+
+<p align="center">
+  <img src="assets/screenshot-invideo-hud-rounded.png" width="750" alt="Yrusika In-Video Controller HUD and Dual Subtitle Translation" />
+</p>
 
 A floating controller HUD is rendered over the video player (`video-hover-button.js`):
 
