@@ -23,6 +23,7 @@ All processing occurs client-side. There are zero subscriptions, zero telemetry,
   - [4. Direct AI Inference and Streaming Pipeline (BYOK)](#4-direct-ai-inference-and-streaming-pipeline-byok)
   - [5. Storage Engine and Direct Obsidian Vault Sync](#5-storage-engine-and-direct-obsidian-vault-sync)
   - [6. In-Video Controller and Player Telemetry](#6-in-video-controller-and-player-telemetry)
+  - [7. Multi-Language Intelligence and Dual Subtitle Processing](#7-multi-language-intelligence-and-dual-subtitle-processing)
 - [Tech Stack](#tech-stack)
 - [Codebase Anatomy](#codebase-anatomy)
 - [Installation and Developer Setup](#installation-and-developer-setup)
@@ -170,6 +171,14 @@ A floating controller HUD is rendered over the video player (`video-hover-button
 * **Playback Speed Regulation:** One-click shortcuts for slow study (`0.8x`), standard (`1.0x`), study burst (`1.5x`), and user-defined high speed (`1.8x` to `2.5x`).
 * **Frame Step Seeking:** Frame-accurate stepping using keyboard shortcuts (`Z` for -10s, `X` for +10s) and direct playhead scrub triggers.
 * **YouTube Ad Intelligence:** Monitors player state transitions to prevent keyframe capture during pre-roll and mid-roll commercials, resuming note capture only when actual lecture content plays.
+
+### 7. Multi-Language Intelligence and Dual Subtitle Processing
+
+Yrusika is built from the ground up to support multilingual learning environments:
+
+* **Dual-Language Subtitle HUD:** The in-player controller features dual language selectors (`★ Primary Language` and `文A Translated Language`), allowing learners to follow foreign-language lectures with synchronized original and translated captions side-by-side with notes.
+* **58-Language Chromium Localization:** Fully internationalized via the native `chrome.i18n` subsystem, with 58 localized dictionaries in `_locales/` ensuring menus, tooltips, and system notifications adapt to the user's native language.
+* **Polyglot Codebase Architecture:** Built cleanly using JavaScript for client-side compute, service workers, and DOM manipulation; HTML5 semantic templates for extension UI dialogs; and isolated CSS for Shadow DOM style boundaries.
 
 ---
 
