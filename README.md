@@ -10,7 +10,9 @@ Yrusika is an open-source, client-side video note-taking workstation and visual 
 All processing occurs client-side. There are zero subscriptions, zero telemetry, zero intermediate servers, and zero vendor lock-in.
 
 <p align="center">
-  <img src="assets/demo.gif" width="850" alt="Yrusika live running workstation demo in Google Chrome with auto-zoom and cursor smoothing" />
+  <a href="https://raw.githubusercontent.com/tejuas98/yrusika/main/assets/demo.gif" target="_blank" rel="noopener noreferrer">
+    <img src="assets/demo.gif" width="850" alt="Yrusika live running workstation demo in Google Chrome with auto-zoom and cursor smoothing" />
+  </a>
 </p>
 
 ---
