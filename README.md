@@ -193,29 +193,35 @@ A floating controller HUD is rendered over the video player (`video-hover-button
 
 ```
 yrusika/
-├── manifest.json              # Extension Manifest V3 metadata, host permissions, and scripts
-├── background.js              # Service Worker: tab events, offscreen management, proxy calls
-├── content-script.js          # Core injected script: viewport splitting, note editor, UI orchestrator
-├── video-hover-button.js      # In-player floating HUD: speed control, playhead tracking, quick actions
-├── offscreen.html             # Offscreen DOM host container for background processing
-├── offscreen.js               # Offscreen worker: canvas frame extraction, edge detection, audio buffer
-├── local-file-system-v2.js    # File System Access API v2 manager: directory handles and file writes
-├── file-registry.js           # File handle cache, duplicate prevention, and asset registration
-├── save-to-obsidian.js        # Obsidian URI protocol builder and Markdown export generator
-├── browser-polyfill.min.js    # Cross-browser WebExtensions API compatibility layer
-├── hover-notes-utils.js       # Shared utility helpers (debouncing, timestamp formatters, sanitize)
-├── unlock-pro.js              # Feature registry ensuring 100% features remain unlocked and free
-├── string-utils.js            # Text manipulation and Markdown formatting helpers
-├── hn-inject.css              # Host-page styles for viewport resizing and dock placement
-├── hn-shadow.css              # Isolated styles applied inside the Shadow DOM component tree
-├── options.html               # Extension settings interface (AI prompts, shortcuts, themes)
-├── options.js                 # Settings controller and API key storage logic
-├── options.css                # Styling for the options and configuration page
-├── popup.html                 # Browser toolbar action popup
-├── popup.js                   # Popup interactions and quick-launch trigger
-├── popup.css                  # Toolbar popup styling
-├── _locales/                  # 58 language localization directories (en, es, zh, ja, de, etc.)
-└── assets/                    # Icons, robot mascot badges, and architecture diagrams
+├── extension/                     # Self-contained Chromium Extension (Load Unpacked)
+│   ├── manifest.json              # Extension Manifest V3 metadata, host permissions, and scripts
+│   ├── background.js              # Service Worker: tab events, offscreen management, proxy calls
+│   ├── content-script.js          # Core injected script: viewport splitting, note editor, UI orchestrator
+│   ├── video-hover-button.js      # In-player floating HUD: speed control, playhead tracking, quick actions
+│   ├── offscreen.html             # Offscreen DOM host container for background processing
+│   ├── offscreen.js               # Offscreen worker: canvas frame extraction, edge detection, audio buffer
+│   ├── local-file-system-v2.js    # File System Access API v2 manager: directory handles and file writes
+│   ├── file-registry.js           # File handle cache, duplicate prevention, and asset registration
+│   ├── save-to-obsidian.js        # Obsidian URI protocol builder and Markdown export generator
+│   ├── browser-polyfill.min.js    # Cross-browser WebExtensions API compatibility layer
+│   ├── hover-notes-utils.js       # Shared utility helpers (debouncing, timestamp formatters, sanitize)
+│   ├── unlock-pro.js              # Feature registry ensuring 100% features remain unlocked and free
+│   ├── string-utils.js            # Text manipulation and Markdown formatting helpers
+│   ├── hn-inject.css              # Host-page styles for viewport resizing and dock placement
+│   ├── hn-shadow.css              # Isolated styles applied inside the Shadow DOM component tree
+│   ├── options.html               # Extension settings interface (AI prompts, shortcuts, themes)
+│   ├── options.js                 # Settings controller and API key storage logic
+│   ├── options.css                # Styling for the options and configuration page
+│   ├── popup.html                 # Browser toolbar action popup
+│   ├── popup.js                   # Popup interactions and quick-launch trigger
+│   ├── popup.css                  # Toolbar popup styling
+│   ├── _locales/                  # 58 language localization directories (en, es, zh, ja, de, etc.)
+│   └── assets/                    # Extension icons and UI graphics
+├── assets/                        # Documentation graphics (flowchart and robot mascot)
+├── .gitattributes                 # GitHub Linguist language classification overrides
+├── .gitignore                     # Git exclusion rules
+├── LICENSE                        # MIT License
+└── README.md                      # Technical documentation and system architecture
 ```
 
 ---
@@ -244,7 +250,7 @@ yrusika/
 
 4. **Load the Extension:**
    * Click **Load unpacked** in the top-left toolbar.
-   * Select the root `/yrusika` directory containing `manifest.json`.
+   * Select the `extension` folder inside `/yrusika`.
 
 5. **Verify Installation:**
    Yrusika will appear in your extension list. Pin it to your browser toolbar for quick access.
