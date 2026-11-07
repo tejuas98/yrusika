@@ -1,0 +1,7 @@
+# GitHub Linguist Language Overrides
+# Ensure GitHub displays the repository as 100% JavaScript (Chromium Extension)
+*.html linguist-detectable=false
+*.css linguist-detectable=false
+_locales/** linguist-vendored
+browser-polyfill.min.js linguist-vendored
+assets/** linguist-vendored
